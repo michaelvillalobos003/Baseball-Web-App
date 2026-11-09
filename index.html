@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Padres Fan Portal | Phase 1 Dashboard</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            padresBrown: '#2F241D',
+            padresGold: '#FFC425',
+            padresDarkBg: '#181412',
+            padresCardDark: '#241E1A'
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    .gold-glow { box-shadow: 0 0 15px rgba(255, 196, 37, 0.35); }
+    .gold-glow:hover { box-shadow: 0 0 25px rgba(255, 196, 37, 0.6); }
+    .tilt-card { transition: transform 0.3s ease, box-shadow 0.3s ease; }
+    .tilt-card:hover { transform: translateY(-5px) rotateX(2deg); }
+  </style>
+</head>
+<body class="bg-slate-100 dark:bg-padresDarkBg text-slate-900 dark:text-slate-100 min-h-screen flex flex-col font-sans transition-colors duration-300">
+
+  <!-- Top Navigation Bar -->
+  <header class="sticky top-0 z-50 bg-padresBrown text-white shadow-lg border-b border-padresGold/30">
+    <div class="max-w-7xl mx-auto px-4 h-16 flex items-center justify-between">
+      <div class="flex items-center space-x-3 cursor-pointer" onclick="switchView('dashboard')">
+        <span class="text-2xl font-black tracking-wider text-padresGold">SD</span>
+        <span class="text-xl font-bold tracking-tight">PADRES FAN HUB</span>
+      </div>
+
+      <!-- Navigation Links -->
+      <nav class="hidden md:flex items-center space-x-6 text-sm font-semibold">
+        <button onclick="switchView('dashboard')" class="hover:text-padresGold transition">Dugout</button>
+        <button onclick="switchView('clubhouse')" class="hover:text-padresGold transition">Clubhouse</button>
+        <button onclick="switchView('gear')" class="hover:text-padresGold transition">Gear Locker</button>
+        <button onclick="switchView('lineup')" class="hover:text-padresGold transition">Lineups</button>
+        <button onclick="switchView('compare')" class="hover:text-padresGold transition">Compare</button>
+      </nav>
+
+      <!-- Theme Switcher & Auth Trigger -->
+      <div class="flex items-center space-x-3">
+        <button id="themeToggleBtn" class="p-2 rounded-lg bg-padresGold/10 hover:bg-padresGold/20 text-padresGold transition">
+          <span id="themeIcon">☀️</span>
+        </button>
+        <button id="loginModalBtn" class="bg-padresGold text-padresBrown font-bold px-4 py-2 rounded-lg hover:bg-yellow-400 transition shadow">
+          Sign In
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Global System Status Banner -->
+  <div id="offlineBanner" class="hidden bg-amber-600 text-white text-xs font-bold text-center py-1 px-4">
+    ⚠️ MLB Live API Offline. Currently displaying local cached backup data.
+  </div>
+
+  <!-- Main View Container -->
+  <main class="flex-grow max-w-7xl w-full mx-auto px-4 py-6">
+
+    <!-- View 1: Dashboard / Home Dugout -->
+    <section id="view-dashboard" class="space-y-6">
+      
+      <!-- Hero Countdown & Trivia Card Grid -->
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        
+        <!-- Countdown Clock -->
+        <div class="md:col-span-2 bg-white dark:bg-padresCardDark border border-slate-200 dark:border-padresGold/20 rounded-2xl p-6 shadow-md border-l-8 border-l-padresGold">
+          <div class="flex justify-between items-center mb-4">
+            <h2 class="text-xs font-black uppercase tracking-widest text-padresGold">Target Event</h2>
+            <span class="text-xs bg-padresGold/20 text-padresGold font-semibold px-2.5 py-1 rounded-full">Petco Park</span>
+          </div>
+          <h3 id="countdownTitle" class="text-2xl font-black mb-2">Opening Day Countdown</h3>
+          <div class="grid grid-cols-4 gap-2 text-center mt-4">
+            <div class="bg-slate-100 dark:bg-padresDarkBg p-3 rounded-xl border border-slate-200 dark:border-white/5">
+              <span id="timerDays" class="block text-3xl font-black text-padresGold">00</span>
+              <span class="text-[10px] uppercase font-bold text-slate-400">Days</span>
+            </div>
+            <div class="bg-slate-100 dark:bg-padresDarkBg p-3 rounded-xl border border-slate-200 dark:border-white/5">
+              <span id="timerHours" class="block text-3xl font-black text-padresGold">00</span>
+              <span class="text-[10px] uppercase font-bold text-slate-400">Hours</span>
+            </div>
+            <div class="bg-slate-100 dark:bg-padresDarkBg p-3 rounded-xl border border-slate-200 dark:border-white/5">
+              <span id="timerMinutes" class="block text-3xl font-black text-padresGold">00</span>
+              <span class="text-[10px] uppercase font-bold text-slate-400">Mins</span>
+            </div>
+            <div class="bg-slate-100 dark:bg-padresDarkBg p-3 rounded-xl border border-slate-200 dark:border-white/5">
+              <span id="timerSeconds" class="block text-3xl font-black text-padresGold">00</span>
+              <span class="text-[10px] uppercase font-bold text-slate-400">Secs</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Daily Fun Fact Widget -->
+        <div class="bg-white dark:bg-padresCardDark border border-slate-200 dark:border-padresGold/20 rounded-2xl p-6 shadow-md flex flex-col justify-between">
+          <div>
+            <div class="flex items-center justify-between mb-3">
+              <span class="text-xs font-black uppercase tracking-widest text-padresGold">Daily Trivia</span>
+              <button id="nextFactBtn" class="text-xs text-slate-400 hover:text-padresGold transition">Shuffle 🎲</button>
+            </div>
+            <p id="funFactText" class="text-sm font-medium italic text-slate-700 dark:text-slate-300">
+              Loading Padres trivia...
+            </p>
+          </div>
+          <button id="quoteModalBtn" class="mt-4 w-full py-2 bg-padresGold/10 hover:bg-padresGold/20 border border-padresGold/30 text-padresGold font-bold text-xs rounded-xl transition">
+            ✨ Get Player Inspiration
+          </button>
+        </div>
+
+      </div>
+
+      <!-- Quick Roster Overview -->
+      <div class="bg-white dark:bg-padresCardDark border border-slate-200 dark:border-padresGold/20 rounded-2xl p-6 shadow-md">
+        <h3 class="text-lg font-bold mb-4 flex items-center justify-between">
+          <span>Featured Padres Stars</span>
+          <span class="text-xs font-normal text-slate-400">MLB Roster Data</span>
+        </h3>
+        <div id="heroRosterGrid" class="grid grid-cols-2 md:grid-cols-4 gap-4">
+          <!-- Populated by JS -->
+        </div>
+      </div>
+    </section>
+
+    <!-- Placeholders for Views 2-5 -->
+    <section id="view-clubhouse" class="hidden p-8 text-center"><h2 class="text-xl font-bold text-padresGold">Expert Clubhouse (Phase 2)</h2></section>
+    <section id="view-gear" class="hidden p-8 text-center"><h2 class="text-xl font-bold text-padresGold">Gear Locker (Phase 3)</h2></section>
+    <section id="view-lineup" class="hidden p-8 text-center"><h2 class="text-xl font-bold text-padresGold">Lineup Builder (Phase 4)</h2></section>
+    <section id="view-compare" class="hidden p-8 text-center"><h2 class="text-xl font-bold text-padresGold">Player Comparison (Phase 5)</h2></section>
+
+  </main>
+
+  <script>
+    // Embedded Local Backup Data for Phase 1 Self-Contained Testing
+    const backupData = {
+      roster: [
+        {
+          id: 665487,
+          name: "Fernando Tatis Jr.",
+          position: "Right Fielder",
+          positionAbbr: "RF",
+          jerseyNumber: "23",
+          headshotUrl: "https://img.mlbstatic.com/mlb-photos/image/upload/v1/people/665487/headshot/67/current",
+          stats: { season: { hr: 25, avg: ".276" } }
+        },
+        {
+          id: 592518,
+          name: "Manny Machado",
+          position: "Third Baseman",
+          positionAbbr: "3B",
+          jerseyNumber: "13",
+          headshotUrl: "https://img.mlbstatic.com/mlb-photos/image/upload/v1/people/592518/headshot/67/current",
+          stats: { season: { hr: 29, avg: ".275" } }
+        },
+        {
+          id: 701538,
+          name: "Jackson Merrill",
+          position: "Center Fielder",
+          positionAbbr: "CF",
+          jerseyNumber: "3",
+          headshotUrl: "https://img.mlbstatic.com/mlb-photos/image/upload/v1/people/701538/headshot/67/current",
+          stats: { season: { hr: 24, avg: ".292" } }
+        },
+        {
+          id: 669221,
+          name: "William Contreras",
+          position: "Catcher",
+          positionAbbr: "C",
+          jerseyNumber: "24",
+          headshotUrl: "https://img.mlbstatic.com/mlb-photos/image/upload/v1/people/669221/headshot/67/current",
+          stats: { season: { hr: 23, avg: ".281" } }
+        }
+      ],
+      triviaFacts: [
+        "Tony Gwynn won 8 National League batting titles during his legendary 20-year career with the San Diego Padres.",
+        "Petco Park opened its doors in downtown San Diego in 2004, featuring the iconic Western Metal Supply Co. building.",
+        "Trevor Hoffman recorded 552 of his 601 career saves wearing a Padres uniform to the iconic sound of 'Hells Bells'."
+      ]
+    };
+
+    let targetCountdownDate = new Date("2027-03-26T20:10:00Z").getTime();
+
+    // Initialize App
+    document.addEventListener('DOMContentLoaded', () => {
+      initTheme();
+      renderTrivia();
+      renderHeroRoster(backupData.roster);
+      startCountdown();
+      setupEventListeners();
+    });
+
+    // View Switcher Router
+    function switchView(viewId) {
+      const views = ['dashboard', 'clubhouse', 'gear', 'lineup', 'compare'];
+      views.forEach(v => {
+        const el = document.getElementById(`view-${v}`);
+        if (el) el.classList.toggle('hidden', v !== viewId);
+      });
+    }
+
+    // Dark/Light Theme Switching
+    function initTheme() {
+      const savedTheme = localStorage.getItem('theme') || 'dark';
+      if (savedTheme === 'dark') {
+        document.documentElement.classList.add('dark');
+        document.getElementById('themeIcon').textContent = '☀️';
+      } else {
+        document.documentElement.classList.remove('dark');
+        document.getElementById('themeIcon').textContent = '🌙';
+      }
+
+      document.getElementById('themeToggleBtn').addEventListener('click', () => {
+        const isDark = document.documentElement.classList.toggle('dark');
+        localStorage.setItem('theme', isDark ? 'dark' : 'light');
+        document.getElementById('themeIcon').textContent = isDark ? '☀️' : '🌙';
+      });
+    }
+
+    // Countdown Clock Timer
+    function startCountdown() {
+      const updateClock = () => {
+        const now = new Date().getTime();
+        const diff = targetCountdownDate - now;
+
+        if (diff <= 0) {
+          document.getElementById('countdownTitle').textContent = "Game Time / Season Active!";
+          return;
+        }
+
+        const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+        const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+        const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+        const seconds = Math.floor((diff % (1000 * 60)) / 1000);
+
+        document.getElementById('timerDays').textContent = String(days).padStart(2, '0');
+        document.getElementById('timerHours').textContent = String(hours).padStart(2, '0');
+        document.getElementById('timerMinutes').textContent = String(minutes).padStart(2, '0');
+        document.getElementById('timerSeconds').textContent = String(seconds).padStart(2, '0');
+      };
+
+      updateClock();
+      setInterval(updateClock, 1000);
+    }
+
+    // Trivia Renderer
+    function renderTrivia() {
+      const facts = backupData.triviaFacts;
+      const randomIndex = Math.floor(Math.random() * facts.length);
+      document.getElementById('funFactText').textContent = `"${facts[randomIndex]}"`;
+    }
+
+    // Render Featured Roster Cards
+    function renderHeroRoster(players) {
+      const grid = document.getElementById('heroRosterGrid');
+      grid.innerHTML = players.map(p => `
+        <div class="tilt-card bg-slate-50 dark:bg-padresDarkBg p-4 rounded-xl border border-slate-200 dark:border-padresGold/20 flex flex-col items-center text-center">
+          <img src="${p.headshotUrl}" alt="${p.name}" class="w-16 h-16 rounded-full border-2 border-padresGold mb-2 object-cover">
+          <h4 class="font-bold text-sm">${p.name}</h4>
+          <span class="text-xs text-padresGold font-semibold">#${p.jerseyNumber} | ${p.positionAbbr}</span>
+          <span class="text-[11px] text-slate-400 mt-1">AVG: ${p.stats.season.avg} | HR: ${p.stats.season.hr}</span>
+        </div>
+      `).join('');
+    }
+
+    function setupEventListeners() {
+      document.getElementById('nextFactBtn').addEventListener('click', renderTrivia);
+    }
+  </script>
+</body>
+</html>
