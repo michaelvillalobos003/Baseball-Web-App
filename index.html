@@ -1,0 +1,772 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Padres Fan Portal | Phase 2 Expert Clubhouse</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            padresBrown: '#2F241D',
+            padresGold: '#FFC425',
+            padresDarkBg: '#181412',
+            padresCardDark: '#241E1A'
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    .gold-glow { box-shadow: 0 0 15px rgba(255, 196, 37, 0.35); }
+    .gold-glow:hover { box-shadow: 0 0 25px rgba(255, 196, 37, 0.6); }
+    .tilt-card { transition: transform 0.3s ease, box-shadow 0.3s ease; }
+    .tilt-card:hover { transform: translateY(-5px) rotateX(2deg) scale(1.02); }
+    .persona-card-selected { border: 2px solid #FFC425; box-shadow: 0 0 20px rgba(255, 196, 37, 0.5); }
+    .chat-bubble-user { background: linear-gradient(135deg, #FFC425, #FFB300); }
+    .chat-bubble-persona { background: #2F241D; border: 1px solid #FFC425; }
+    .typing-indicator::after { content: '|'; animation: blink 0.7s infinite; }
+    @keyframes blink { 0%, 50% { opacity: 1; } 51%, 100% { opacity: 0; } }
+  </style>
+</head>
+<body class="bg-slate-100 dark:bg-padresDarkBg text-slate-900 dark:text-slate-100 min-h-screen flex flex-col font-sans transition-colors duration-300">
+
+  <!-- Top Navigation Bar -->
+  <header class="sticky top-0 z-50 bg-padresBrown text-white shadow-lg border-b border-padresGold/30">
+    <div class="max-w-7xl mx-auto px-4 h-16 flex items-center justify-between">
+      <div class="flex items-center space-x-3 cursor-pointer" onclick="switchView('dashboard')">
+        <span class="text-2xl font-black tracking-wider text-padresGold">SD</span>
+        <span class="text-xl font-bold tracking-tight">PADRES FAN HUB</span>
+      </div>
+
+      <!-- Navigation Links -->
+      <nav class="hidden md:flex items-center space-x-6 text-sm font-semibold">
+        <button onclick="switchView('dashboard')" class="hover:text-padresGold transition">Dugout</button>
+        <button onclick="switchView('clubhouse')" class="hover:text-padresGold transition">Clubhouse</button>
+        <button onclick="switchView('gear')" class="hover:text-padresGold transition">Gear Locker</button>
+        <button onclick="switchView('lineup')" class="hover:text-padresGold transition">Lineups</button>
+        <button onclick="switchView('compare')" class="hover:text-padresGold transition">Compare</button>
+      </nav>
+
+      <!-- Theme Switcher & Auth Trigger -->
+      <div class="flex items-center space-x-3">
+        <button id="themeToggleBtn" class="p-2 rounded-lg bg-padresGold/10 hover:bg-padresGold/20 text-padresGold transition">
+          <span id="themeIcon">☀️</span>
+        </button>
+        <button id="loginModalBtn" class="bg-padresGold text-padresBrown font-bold px-4 py-2 rounded-lg hover:bg-yellow-400 transition shadow">
+          Sign In
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Global System Status Banner -->
+  <div id="offlineBanner" class="hidden bg-amber-600 text-white text-xs font-bold text-center py-1 px-4">
+    ⚠️ MLB Live API Offline. Currently displaying local cached backup data.
+  </div>
+
+  <!-- Main View Container -->
+  <main class="flex-grow max-w-7xl w-full mx-auto px-4 py-6">
+
+    <!-- View 1: Dashboard / Home Dugout -->
+    <section id="view-dashboard" class="space-y-6">
+      
+      <!-- Hero Countdown & Trivia Card Grid -->
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        
+        <!-- Countdown Clock -->
+        <div class="md:col-span-2 bg-white dark:bg-padresCardDark border border-slate-200 dark:border-padresGold/20 rounded-2xl p-6 shadow-md border-l-8 border-l-padresGold">
+          <div class="flex justify-between items-center mb-4">
+            <h2 class="text-xs font-black uppercase tracking-widest text-padresGold">Target Event</h2>
+            <span class="text-xs bg-padresGold/20 text-padresGold font-semibold px-2.5 py-1 rounded-full">Petco Park</span>
+          </div>
+          <h3 id="countdownTitle" class="text-2xl font-black mb-2">Opening Day Countdown</h3>
+          <div class="grid grid-cols-4 gap-2 text-center mt-4">
+            <div class="bg-slate-100 dark:bg-padresDarkBg p-3 rounded-xl border border-slate-200 dark:border-white/5">
+              <span id="timerDays" class="block text-3xl font-black text-padresGold">00</span>
+              <span class="text-[10px] uppercase font-bold text-slate-400">Days</span>
+            </div>
+            <div class="bg-slate-100 dark:bg-padresDarkBg p-3 rounded-xl border border-slate-200 dark:border-white/5">
+              <span id="timerHours" class="block text-3xl font-black text-padresGold">00</span>
+              <span class="text-[10px] uppercase font-bold text-slate-400">Hours</span>
+            </div>
+            <div class="bg-slate-100 dark:bg-padresDarkBg p-3 rounded-xl border border-slate-200 dark:border-white/5">
+              <span id="timerMinutes" class="block text-3xl font-black text-padresGold">00</span>
+              <span class="text-[10px] uppercase font-bold text-slate-400">Mins</span>
+            </div>
+            <div class="bg-slate-100 dark:bg-padresDarkBg p-3 rounded-xl border border-slate-200 dark:border-white/5">
+              <span id="timerSeconds" class="block text-3xl font-black text-padresGold">00</span>
+              <span class="text-[10px] uppercase font-bold text-slate-400">Secs</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Daily Fun Fact Widget -->
+        <div class="bg-white dark:bg-padresCardDark border border-slate-200 dark:border-padresGold/20 rounded-2xl p-6 shadow-md flex flex-col justify-between">
+          <div>
+            <div class="flex items-center justify-between mb-3">
+              <span class="text-xs font-black uppercase tracking-widest text-padresGold">Daily Trivia</span>
+              <button id="nextFactBtn" class="text-xs text-slate-400 hover:text-padresGold transition">Shuffle 🎲</button>
+            </div>
+            <p id="funFactText" class="text-sm font-medium italic text-slate-700 dark:text-slate-300">
+              Loading Padres trivia...
+            </p>
+          </div>
+          <button id="quoteModalBtn" class="mt-4 w-full py-2 bg-padresGold/10 hover:bg-padresGold/20 border border-padresGold/30 text-padresGold font-bold text-xs rounded-xl transition">
+            ✨ Get Player Inspiration
+          </button>
+        </div>
+
+      </div>
+
+      <!-- Quick Roster Overview -->
+      <div class="bg-white dark:bg-padresCardDark border border-slate-200 dark:border-padresGold/20 rounded-2xl p-6 shadow-md">
+        <h3 class="text-lg font-bold mb-4 flex items-center justify-between">
+          <span>Featured Padres Stars</span>
+          <span class="text-xs font-normal text-slate-400">MLB Roster Data</span>
+        </h3>
+        <div id="heroRosterGrid" class="grid grid-cols-2 md:grid-cols-4 gap-4">
+          <!-- Populated by JS -->
+        </div>
+      </div>
+    </section>
+
+    <!-- View 2: Expert Clubhouse (Phase 2) -->
+    <section id="view-clubhouse" class="hidden space-y-6">
+      <!-- Clubhouse Header -->
+      <div class="bg-white dark:bg-padresCardDark border border-slate-200 dark:border-padresGold/20 rounded-2xl p-6 shadow-md border-l-8 border-l-padresGold">
+        <div class="flex items-center justify-between mb-4">
+          <div>
+            <h2 class="text-2xl font-black text-padresGold">EXPERT CLUBHOUSE</h2>
+            <p class="text-sm text-slate-400 mt-1">Chat with Padres AI Personas</p>
+          </div>
+          <div class="flex items-center space-x-2">
+            <span class="text-xs bg-padresGold/20 text-padresGold font-semibold px-3 py-1 rounded-full">✓ ONLINE</span>
+          </div>
+        </div>
+        <p class="text-sm text-slate-600 dark:text-slate-300">
+          Select a player persona to start chatting. Each expert has unique insights and advice tailored to their role on the team.
+        </p>
+      </div>
+
+      <!-- Persona Cards Grid -->
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+        <!-- William Contreras - Catcher & Playmaker -->
+        <div class="tilt-card bg-white dark:bg-padresCardDark border border-slate-200 dark:border-padresGold/20 rounded-2xl p-5 shadow-md cursor-pointer persona-card" 
+             data-persona="contreras" 
+             onclick="selectPersona('contreras')">
+          <div class="flex flex-col items-center text-center">
+            <div class="relative mb-3">
+              <img src="https://img.mlbstatic.com/mlb-photos/image/upload/v1/people/669221/headshot/67/current" 
+                   alt="William Contreras" 
+                   class="w-20 h-20 rounded-full border-4 border-padresGold object-cover">
+              <span class="absolute -top-1 -right-1 bg-padresGold text-padresBrown text-xs font-bold px-2 py-1 rounded-full">C</span>
+            </div>
+            <h3 class="text-lg font-bold text-padresGold">William Contreras</h3>
+            <p class="text-sm text-slate-600 dark:text-slate-300 mb-2">Catcher & Playmaker</p>
+            <div class="text-xs text-slate-500 dark:text-slate-400 space-y-1">
+              <span class="block">✓ Pitch framing</span>
+              <span class="block">✓ Game calling</span>
+              <span class="block">✓ Plate discipline</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Fernando Tatis Jr. - Drip & Style Icon -->
+        <div class="tilt-card bg-white dark:bg-padresCardDark border border-slate-200 dark:border-padresGold/20 rounded-2xl p-5 shadow-md cursor-pointer persona-card" 
+             data-persona="tatis" 
+             onclick="selectPersona('tatis')">
+          <div class="flex flex-col items-center text-center">
+            <div class="relative mb-3">
+              <img src="https://img.mlbstatic.com/mlb-photos/image/upload/v1/people/665487/headshot/67/current" 
+                   alt="Fernando Tatis Jr." 
+                   class="w-20 h-20 rounded-full border-4 border-padresGold object-cover">
+              <span class="absolute -top-1 -right-1 bg-padresGold text-padresBrown text-xs font-bold px-2 py-1 rounded-full">RF</span>
+            </div>
+            <h3 class="text-lg font-bold text-padresGold">Fernando Tatis Jr.</h3>
+            <p class="text-sm text-slate-600 dark:text-slate-300 mb-2">Drip & Style Icon</p>
+            <div class="text-xs text-slate-500 dark:text-slate-400 space-y-1">
+              <span class="block">✓ Custom cleats</span>
+              <span class="block">✓ Batting gloves</span>
+              <span class="block">✓ Game-day drip</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Manny Machado - Hitting & Defense Specialist -->
+        <div class="tilt-card bg-white dark:bg-padresCardDark border border-slate-200 dark:border-padresGold/20 rounded-2xl p-5 shadow-md cursor-pointer persona-card" 
+             data-persona="machado" 
+             onclick="selectPersona('machado')">
+          <div class="flex flex-col items-center text-center">
+            <div class="relative mb-3">
+              <img src="https://img.mlbstatic.com/mlb-photos/image/upload/v1/people/592518/headshot/67/current" 
+                   alt="Manny Machado" 
+                   class="w-20 h-20 rounded-full border-4 border-padresGold object-cover">
+              <span class="absolute -top-1 -right-1 bg-padresGold text-padresBrown text-xs font-bold px-2 py-1 rounded-full">3B</span>
+            </div>
+            <h3 class="text-lg font-bold text-padresGold">Manny Machado</h3>
+            <p class="text-sm text-slate-600 dark:text-slate-300 mb-2">Hitting & Defense Specialist</p>
+            <div class="text-xs text-slate-500 dark:text-slate-400 space-y-1">
+              <span class="block">✓ Swing mechanics</span>
+              <span class="block">✓ Third base defense</span>
+              <span class="block">✓ Leadership</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Jackson Merrill - Stats & Fantasy Scout -->
+        <div class="tilt-card bg-white dark:bg-padresCardDark border border-slate-200 dark:border-padresGold/20 rounded-2xl p-5 shadow-md cursor-pointer persona-card" 
+             data-persona="merrill" 
+             onclick="selectPersona('merrill')">
+          <div class="flex flex-col items-center text-center">
+            <div class="relative mb-3">
+              <img src="https://img.mlbstatic.com/mlb-photos/image/upload/v1/people/701538/headshot/67/current" 
+                   alt="Jackson Merrill" 
+                   class="w-20 h-20 rounded-full border-4 border-padresGold object-cover">
+              <span class="absolute -top-1 -right-1 bg-padresGold text-padresBrown text-xs font-bold px-2 py-1 rounded-full">CF</span>
+            </div>
+            <h3 class="text-lg font-bold text-padresGold">Jackson Merrill</h3>
+            <p class="text-sm text-slate-600 dark:text-slate-300 mb-2">Stats & Fantasy Scout</p>
+            <div class="text-xs text-slate-500 dark:text-slate-400 space-y-1">
+              <span class="block">✓ Breakout metrics</span>
+              <span class="block">✓ Launch angles</span>
+              <span class="block">✓ Outfield play</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Active Persona Chat Section -->
+      <div id="chatSection" class="hidden bg-white dark:bg-padresCardDark border border-slate-200 dark:border-padresGold/20 rounded-2xl shadow-md overflow-hidden">
+        <!-- Active Persona Header -->
+        <div id="activePersonaHeader" class="bg-padresBrown p-4 flex items-center justify-between border-b border-padresGold/20">
+          <div class="flex items-center space-x-3">
+            <img id="activePersonaAvatar" src="" alt="" class="w-12 h-12 rounded-full border-2 border-padresGold object-cover">
+            <div>
+              <h3 id="activePersonaName" class="text-lg font-bold text-padresGold"></h3>
+              <p id="activePersonaTitle" class="text-sm text-slate-300"></p>
+            </div>
+          </div>
+          <div class="flex items-center space-x-2">
+            <span id="activePersonaStatus" class="text-xs bg-green-500/20 text-green-400 font-semibold px-2 py-1 rounded-full">● ONLINE</span>
+            <button onclick="clearChat()" class="text-xs text-slate-400 hover:text-padresGold transition">Clear Chat</button>
+          </div>
+        </div>
+
+        <!-- Chat Display Area -->
+        <div id="chatDisplay" class="h-96 overflow-y-auto p-4 space-y-4 bg-slate-50 dark:bg-padresDarkBg">
+          <!-- Chat messages will be inserted here -->
+          <div id="welcomeMessage" class="text-center text-slate-400 dark:text-slate-500 text-sm py-4">
+            Start a conversation! Type your question or use a quick topic below.
+          </div>
+        </div>
+
+        <!-- Quick Topic Buttons -->
+        <div class="p-4 border-t border-slate-200 dark:border-white/5">
+          <div class="flex flex-wrap gap-2 mb-3">
+            <button onclick="useQuickTopic('Fix My Swing')" class="px-3 py-1.5 bg-padresGold/10 hover:bg-padresGold/20 text-padresGold text-xs font-semibold rounded-lg transition border border-padresGold/20">Fix My Swing</button>
+            <button onclick="useQuickTopic('Cleat Drip Recommendations')" class="px-3 py-1.5 bg-padresGold/10 hover:bg-padresGold/20 text-padresGold text-xs font-semibold rounded-lg transition border border-padresGold/20">Cleat Drip Recommendations</button>
+            <button onclick="useQuickTopic('Petco Park Tips')" class="px-3 py-1.5 bg-padresGold/10 hover:bg-padresGold/20 text-padresGold text-xs font-semibold rounded-lg transition border border-padresGold/20">Petco Park Tips</button>
+            <button onclick="useQuickTopic('Breakout Stats')" class="px-3 py-1.5 bg-padresGold/10 hover:bg-padresGold/20 text-padresGold text-xs font-semibold rounded-lg transition border border-padresGold/20">Breakout Stats</button>
+          </div>
+        </div>
+
+        <!-- Chat Input Area -->
+        <div class="p-4 border-t border-slate-200 dark:border-white/5 bg-slate-50 dark:bg-padresDarkBg">
+          <div class="flex items-center space-x-2">
+            <input id="chatInput" type="text" placeholder="Type your message..." 
+                   class="flex-grow px-4 py-2 rounded-lg bg-white dark:bg-padresCardDark border border-slate-200 dark:border-padresGold/20 text-slate-900 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-padresGold/50"
+                   onkeypress="if(event.key==='Enter') sendMessage()">
+            <button onclick="sendMessage()" class="bg-padresGold text-padresBrown font-bold px-4 py-2 rounded-lg hover:bg-yellow-400 transition shadow text-sm">
+              Send
+            </button>
+          </div>
+          <div id="typingIndicator" class="text-xs text-slate-400 mt-1 hidden"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Placeholders for Views 3-5 -->
+    <section id="view-gear" class="hidden p-8 text-center"><h2 class="text-xl font-bold text-padresGold">Gear Locker (Phase 3)</h2></section>
+    <section id="view-lineup" class="hidden p-8 text-center"><h2 class="text-xl font-bold text-padresGold">Lineup Builder (Phase 4)</h2></section>
+    <section id="view-compare" class="hidden p-8 text-center"><h2 class="text-xl font-bold text-padresGold">Player Comparison (Phase 5)</h2></section>
+
+  </main>
+
+  <script>
+    // Embedded Local Backup Data for Phase 1 & 2
+    const backupData = {
+      roster: [
+        {
+          id: 665487,
+          name: "Fernando Tatis Jr.",
+          position: "Right Fielder",
+          positionAbbr: "RF",
+          jerseyNumber: "23",
+          headshotUrl: "https://img.mlbstatic.com/mlb-photos/image/upload/v1/people/665487/headshot/67/current",
+          stats: { season: { hr: 25, avg: ".276" } }
+        },
+        {
+          id: 592518,
+          name: "Manny Machado",
+          position: "Third Baseman",
+          positionAbbr: "3B",
+          jerseyNumber: "13",
+          headshotUrl: "https://img.mlbstatic.com/mlb-photos/image/upload/v1/people/592518/headshot/67/current",
+          stats: { season: { hr: 29, avg: ".275" } }
+        },
+        {
+          id: 701538,
+          name: "Jackson Merrill",
+          position: "Center Fielder",
+          positionAbbr: "CF",
+          jerseyNumber: "3",
+          headshotUrl: "https://img.mlbstatic.com/mlb-photos/image/upload/v1/people/701538/headshot/67/current",
+          stats: { season: { hr: 24, avg: ".292" } }
+        },
+        {
+          id: 669221,
+          name: "William Contreras",
+          position: "Catcher",
+          positionAbbr: "C",
+          jerseyNumber: "24",
+          headshotUrl: "https://img.mlbstatic.com/mlb-photos/image/upload/v1/people/669221/headshot/67/current",
+          stats: { season: { hr: 23, avg: ".281" } }
+        }
+      ],
+      triviaFacts: [
+        "Tony Gwynn won 8 National League batting titles during his legendary 20-year career with the San Diego Padres.",
+        "Petco Park opened its doors in downtown San Diego in 2004, featuring the iconic Western Metal Supply Co. building.",
+        "Trevor Hoffman recorded 552 of his 601 career saves wearing a Padres uniform to the iconic sound of 'Hells Bells'."
+      ]
+    };
+
+    // Persona Data
+    const personas = {
+      contreras: {
+        name: "William Contreras",
+        title: "Catcher & Playmaker",
+        avatar: "https://img.mlbstatic.com/mlb-photos/image/upload/v1/people/669221/headshot/67/current",
+        position: "C",
+        specialties: ["Pitch framing", "Game calling", "Plate discipline"],
+        welcome: "Hey there! I'm William Contreras. Ask me anything about catching, pitch selection, or how to read a pitcher's mind. I've got your back behind the plate!"
+      },
+      tatis: {
+        name: "Fernando Tatis Jr.",
+        title: "Drip & Style Icon",
+        avatar: "https://img.mlbstatic.com/mlb-photos/image/upload/v1/people/665487/headshot/67/current",
+        position: "RF",
+        specialties: ["Custom cleats", "Batting gloves", "Game-day drip"],
+        welcome: "What's good, fam? Tatis in the house! 🔥 Want the hottest cleats? Need swag advice? I'm your guy. Let's talk style and baseball!"
+      },
+      machado: {
+        name: "Manny Machado",
+        title: "Hitting & Defense Specialist",
+        avatar: "https://img.mlbstatic.com/mlb-photos/image/upload/v1/people/592518/headshot/67/current",
+        position: "3B",
+        specialties: ["Swing mechanics", "Third base defense", "Leadership"],
+        welcome: "Manny Machado here. Whether you need to fix your swing, improve your defense at the hot corner, or lead your team, I've got the experience to help you level up."
+      },
+      merrill: {
+        name: "Jackson Merrill",
+        title: "Stats & Fantasy Scout",
+        avatar: "https://img.mlbstatic.com/mlb-photos/image/upload/v1/people/701538/headshot/67/current",
+        position: "CF",
+        specialties: ["Breakout metrics", "Launch angles", "Outfield play"],
+        welcome: "Jackson Merrill, stats nerd and fantasy baseball enthusiast! Ask me about launch angles, breakout players, or how to dominate your fantasy league. The numbers don't lie!"
+      }
+    };
+
+    // Persona Response Generators
+    const personaResponses = {
+      contreras: {
+        "Fix My Swing": "For a catcher's perspective on hitting: focus on your load and timing. We see every pitch, so trust me - patience at the plate is key. Work on keeping your hands back and driving through the ball.",
+        "Cleat Drip Recommendations": "I'm more about function than fashion, but I do appreciate a good pair of cleats. Look for something with ankle support - we catchers need that stability. Nike Alpha Huarache or Under Armour Harper are solid choices.",
+        "Petco Park Tips": "At Petco, the ball carries well to right-center. As a catcher, I can tell you the pitchers love the spacious outfield. Work the gaps and use the whole field. And always respect the park's dimensions!",
+        "Breakout Stats": "For catchers, look at pitch framing runs and caught stealing percentage. But the most underrated stat? Blocking pitches in the dirt. That's how you earn a pitcher's trust and win games."
+      },
+      tatis: {
+        "Fix My Swing": "Bro, it's all about the swag in your swing! 🔥 Keep it loose, let those hips rotate, and finish high. And don't forget - confidence is everything. Step in that box like you own it!",
+        "Cleat Drip Recommendations": "Oh you know I got you! Right now I'm rocking the Nike Alpha Huarache Elite with custom gold and brown accents. But if you want real heat, check out my signature line dropping soon. Trust me, they'll turn heads! 👟🔥",
+        "Petco Park Tips": "Petco is my house! The left field wall is tall, so don't try to muscle up. Go opposite field, use the alleys. And when you're on defense, respect the gaps - that ball can carry!",
+        "Breakout Stats": "Stats? I'm more about the vibes! But I'll tell you this - exit velocity and barrel rate matter. If you're squaring up the ball, the numbers will follow. Just stay locked in! 💪"
+      },
+      machado: {
+        "Fix My Swing": "Let's break this down. First, your stance should be balanced. Hands high, elbow up. As the pitch comes, stride forward and keep your weight back. Then - BOOM - explode through the ball. Stay on top, don't uppercut. And always, always keep your head still.",
+        "Cleat Drip Recommendations": "For hitting, you need cleats that give you traction but allow for quick pivoting. I wear the New Balance 3000v5 - great support, lightweight. And make sure they're broken in before game day.",
+        "Petco Park Tips": "At Petco, the infield plays fast. As a third baseman, I can tell you the ball comes hot off the bat. Stay on your toes, anticipate the hop. And at the plate, the background can be tough - focus on the pitcher's release point.",
+        "Breakout Stats": "Look at hard hit percentage and line drive rate. Those tell you if a hitter is really making quality contact. And for defense at third, range factor and defensive runs saved separate the good from the great."
+      },
+      merrill: {
+        "Fix My Swing": "Data shows that optimal launch angle is between 10-25 degrees for line drives. Work on your attack angle - you want to match the plane of the pitch. And don't forget: the best hitters have a plan. Know the count, know the pitcher.",
+        "Cleat Drip Recommendations": "From a metrics standpoint, lighter cleats can improve your first-step quickness. The Adidas Adizero Afterburner 6 weighs just 9.5 oz. But comfort is key - you don't want to sacrifice stability for weight.",
+        "Petco Park Tips": "Petco Park has a park factor of 98 for runs, slightly below average. The marine layer keeps the ball from carrying as much. So focus on hard contact rather than trying to hit it out. The gaps are your friend here.",
+        "Breakout Stats": "For fantasy, look at xwOBA (expected weighted on-base average) and xSLG (expected slugging). These metrics remove luck and tell you a player's true talent. Also, pay attention to BABIP - if it's too high or low, regression is coming."
+      }
+    };
+
+    // Generic responses for custom questions
+    const genericResponses = {
+      contreras: [
+        "As a catcher, I see everything on the field. Communication is key - make sure you're on the same page with your pitcher.",
+        "Pitch framing is an art. Work on presenting the ball low and away - that's where you get the most calls.",
+        "Blocking pitches in the dirt wins games. It's not glamorous, but it saves runs and keeps your pitcher confident.",
+        "Game calling requires knowing your pitcher's strengths and the hitter's weaknesses. Study the scouting reports!"
+      ],
+      tatis: [
+        "It's all about the energy! Bring that positive vibe to the park every day. Baseball is a game - have fun with it! 🎉",
+        "My style? It's authentic. Be yourself, play hard, and the fans will love you. That's what Padres baseball is about.",
+        "I love San Diego! The weather, the fans, the vibe. It's the perfect place to play baseball.",
+        "Confidence is everything. When you step on that field, believe you're the best. Because you are! 💯"
+      ],
+      machado: [
+        "Defense wins championships. At third base, every play matters. Stay ready, stay focused.",
+        "Hitting is timing and mechanics. When you're struggling, go back to basics. Check your grip, your stance, your swing path.",
+        "Leadership isn't about talking - it's about doing. Show up every day, work hard, and your teammates will follow.",
+        "I take pride in my defense. The hot corner is where plays are made. Be ready for anything!"
+      ],
+      merrill: [
+        "The numbers tell a story. If you know how to read them, you can find hidden value in any player.",
+        "Fantasy baseball is won with research. Look at the matchups, the park factors, the recent trends.",
+        "Launch angle and exit velocity are the most predictive hitting metrics. But don't forget about plate discipline!",
+        "Outfield play is about reads and routes. The best outfielders make it look effortless because they take the right path."
+      ]
+    };
+
+    let targetCountdownDate = new Date("2027-03-26T20:10:00Z").getTime();
+    let currentPersona = null;
+
+    // Initialize App
+    document.addEventListener('DOMContentLoaded', () => {
+      initTheme();
+      renderTrivia();
+      renderHeroRoster(backupData.roster);
+      startCountdown();
+      setupEventListeners();
+      loadChatHistory();
+    });
+
+    // View Switcher Router
+    function switchView(viewId) {
+      const views = ['dashboard', 'clubhouse', 'gear', 'lineup', 'compare'];
+      views.forEach(v => {
+        const el = document.getElementById(`view-${v}`);
+        if (el) el.classList.toggle('hidden', v !== viewId);
+      });
+      
+      // Reset persona selection when switching views
+      if (viewId !== 'clubhouse') {
+        // Keep chat history but hide chat section
+        document.getElementById('chatSection').classList.add('hidden');
+      }
+    }
+
+    // Dark/Light Theme Switching
+    function initTheme() {
+      const savedTheme = localStorage.getItem('theme') || 'dark';
+      if (savedTheme === 'dark') {
+        document.documentElement.classList.add('dark');
+        document.getElementById('themeIcon').textContent = '☀️';
+      } else {
+        document.documentElement.classList.remove('dark');
+        document.getElementById('themeIcon').textContent = '🌙';
+      }
+
+      document.getElementById('themeToggleBtn').addEventListener('click', () => {
+        const isDark = document.documentElement.classList.toggle('dark');
+        localStorage.setItem('theme', isDark ? 'dark' : 'light');
+        document.getElementById('themeIcon').textContent = isDark ? '☀️' : '🌙';
+      });
+    }
+
+    // Countdown Clock Timer
+    function startCountdown() {
+      const updateClock = () => {
+        const now = new Date().getTime();
+        const diff = targetCountdownDate - now;
+
+        if (diff <= 0) {
+          document.getElementById('countdownTitle').textContent = "Game Time / Season Active!";
+          return;
+        }
+
+        const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+        const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+        const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+        const seconds = Math.floor((diff % (1000 * 60)) / 1000);
+
+        document.getElementById('timerDays').textContent = String(days).padStart(2, '0');
+        document.getElementById('timerHours').textContent = String(hours).padStart(2, '0');
+        document.getElementById('timerMinutes').textContent = String(minutes).padStart(2, '0');
+        document.getElementById('timerSeconds').textContent = String(seconds).padStart(2, '0');
+      };
+
+      updateClock();
+      setInterval(updateClock, 1000);
+    }
+
+    // Trivia Renderer
+    function renderTrivia() {
+      const facts = backupData.triviaFacts;
+      const randomIndex = Math.floor(Math.random() * facts.length);
+      document.getElementById('funFactText').textContent = `"${facts[randomIndex]}"`;
+    }
+
+    // Render Featured Roster Cards
+    function renderHeroRoster(players) {
+      const grid = document.getElementById('heroRosterGrid');
+      grid.innerHTML = players.map(p => `
+        <div class="tilt-card bg-slate-50 dark:bg-padresDarkBg p-4 rounded-xl border border-slate-200 dark:border-padresGold/20 flex flex-col items-center text-center">
+          <img src="${p.headshotUrl}" alt="${p.name}" class="w-16 h-16 rounded-full border-2 border-padresGold mb-2 object-cover">
+          <h4 class="font-bold text-sm">${p.name}</h4>
+          <span class="text-xs text-padresGold font-semibold">#${p.jerseyNumber} | ${p.positionAbbr}</span>
+          <span class="text-[11px] text-slate-400 mt-1">AVG: ${p.stats.season.avg} | HR: ${p.stats.season.hr}</span>
+        </div>
+      `).join('');
+    }
+
+    // Persona Selection
+    function selectPersona(personaKey) {
+      currentPersona = personaKey;
+      const persona = personas[personaKey];
+      
+      // Update UI
+      document.getElementById('chatSection').classList.remove('hidden');
+      document.getElementById('activePersonaAvatar').src = persona.avatar;
+      document.getElementById('activePersonaName').textContent = persona.name;
+      document.getElementById('activePersonaTitle').textContent = persona.title;
+      
+      // Update persona cards - remove previous selection
+      document.querySelectorAll('.persona-card').forEach(card => {
+        card.classList.remove('persona-card-selected', 'gold-glow');
+      });
+      
+      // Highlight selected card
+      const selectedCard = document.querySelector(`[data-persona="${personaKey}"]`);
+      if (selectedCard) {
+        selectedCard.classList.add('persona-card-selected', 'gold-glow');
+      }
+      
+      // Load chat history for this persona
+      loadPersonaChatHistory(personaKey);
+      
+      // Scroll to chat section
+      document.getElementById('chatSection').scrollIntoView({ behavior: 'smooth' });
+    }
+
+    // Quick Topic Selection
+    function useQuickTopic(topic) {
+      document.getElementById('chatInput').value = topic;
+      sendMessage();
+    }
+
+    // Send Message
+    function sendMessage() {
+      const input = document.getElementById('chatInput');
+      const message = input.value.trim();
+      
+      if (!message || !currentPersona) return;
+      
+      // Clear input
+      input.value = '';
+      
+      // Get persona data
+      const persona = personas[currentPersona];
+      
+      // Display user message
+      displayMessage(message, 'user');
+      
+      // Show typing indicator
+      const typingIndicator = document.getElementById('typingIndicator');
+      typingIndicator.textContent = `${persona.name} is typing`;
+      typingIndicator.classList.remove('hidden');
+      
+      // Simulate typing delay
+      setTimeout(() => {
+        typingIndicator.classList.add('hidden');
+        
+        // Generate response
+        const response = generatePersonaResponse(currentPersona, message);
+        displayMessage(response, 'persona', persona.avatar);
+        
+        // Save to chat history
+        saveMessageToHistory(currentPersona, message, response);
+      }, 1000);
+      
+      // Also try to call backend API if available
+      try {
+        fetch('/api/chat', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ 
+            prompt: message, 
+            persona: currentPersona 
+          })
+        }).catch(() => {
+          // Fallback to mock responses (already handled above)
+        });
+      } catch (e) {
+        // Backend not available, using mock responses
+      }
+    }
+
+    // Generate Persona Response
+    function generatePersonaResponse(personaKey, message) {
+      // Check for quick topic matches
+      const quickTopics = [
+        "Fix My Swing",
+        "Cleat Drip Recommendations", 
+        "Petco Park Tips",
+        "Breakout Stats"
+      ];
+      
+      for (const topic of quickTopics) {
+        if (message === topic && personaResponses[personaKey] && personaResponses[personaKey][topic]) {
+          return personaResponses[personaKey][topic];
+        }
+      }
+      
+      // Check for partial matches in quick topics
+      for (const topic of quickTopics) {
+        if (message.toLowerCase().includes(topic.toLowerCase()) && personaResponses[personaKey] && personaResponses[personaKey][topic]) {
+          return personaResponses[personaKey][topic];
+        }
+      }
+      
+      // Generate a generic response based on persona
+      const persona = personas[personaKey];
+      const generic = genericResponses[personaKey];
+      
+      if (generic && generic.length > 0) {
+        const randomIndex = Math.floor(Math.random() * generic.length);
+        return generic[randomIndex];
+      }
+      
+      return `Thanks for your question! As ${persona.name}, ${persona.title}, I'll do my best to help.`;
+    }
+
+    // Display Message in Chat
+    function displayMessage(text, type, avatar = null) {
+      const chatDisplay = document.getElementById('chatDisplay');
+      const welcomeMessage = document.getElementById('welcomeMessage');
+      
+      // Hide welcome message on first user message
+      if (type === 'user' && welcomeMessage) {
+        welcomeMessage.classList.add('hidden');
+      }
+      
+      const messageDiv = document.createElement('div');
+      messageDiv.classList.add('flex', 'items-start', 'space-x-3');
+      
+      if (type === 'user') {
+        messageDiv.classList.add('justify-end', 'flex-row-reverse');
+        messageDiv.innerHTML = `
+          <div class="max-w-[80%] rounded-2xl px-4 py-2 chat-bubble-user text-slate-900">
+            <p>${text}</p>
+          </div>
+        `;
+      } else {
+        messageDiv.innerHTML = `
+          <img src="${avatar}" alt="Persona" class="w-8 h-8 rounded-full border-2 border-padresGold object-cover">
+          <div class="max-w-[80%] rounded-2xl px-4 py-2 chat-bubble-persona text-slate-100">
+            <p>${text}</p>
+          </div>
+        `;
+      }
+      
+      chatDisplay.appendChild(messageDiv);
+      
+      // Scroll to bottom
+      setTimeout(() => {
+        chatDisplay.scrollTop = chatDisplay.scrollHeight;
+      }, 100);
+    }
+
+    // Save Message to LocalStorage
+    function saveMessageToHistory(personaKey, userMessage, personaResponse) {
+      let chatHistory = JSON.parse(localStorage.getItem('clubhouseChatHistory')) || {};
+      
+      if (!chatHistory[personaKey]) {
+        chatHistory[personaKey] = [];
+      }
+      
+      chatHistory[personaKey].push({
+        user: userMessage,
+        persona: personaResponse,
+        timestamp: new Date().toISOString()
+      });
+      
+      localStorage.setItem('clubhouseChatHistory', JSON.stringify(chatHistory));
+    }
+
+    // Load All Chat History
+    function loadChatHistory() {
+      const chatHistory = JSON.parse(localStorage.getItem('clubhouseChatHistory')) || {};
+      // History is loaded per-persona when selected
+    }
+
+    // Load Chat History for Specific Persona
+    function loadPersonaChatHistory(personaKey) {
+      const chatDisplay = document.getElementById('chatDisplay');
+      const chatHistory = JSON.parse(localStorage.getItem('clubhouseChatHistory')) || {};
+      const persona = personas[personaKey];
+      
+      // Clear current chat
+      chatDisplay.innerHTML = '';
+      
+      if (chatHistory[personaKey] && chatHistory[personaKey].length > 0) {
+        // Display existing chat history
+        chatHistory[personaKey].forEach(entry => {
+          displayMessage(entry.user, 'user');
+          displayMessage(entry.persona, 'persona', persona.avatar);
+        });
+      } else {
+        // Display welcome message
+        const welcomeDiv = document.createElement('div');
+        welcomeDiv.classList.add('text-center', 'text-slate-400', 'dark:text-slate-500', 'text-sm', 'py-4');
+        welcomeDiv.textContent = persona.welcome;
+        chatDisplay.appendChild(welcomeDiv);
+      }
+    }
+
+    // Clear Chat
+    function clearChat() {
+      if (!currentPersona) return;
+      
+      const chatDisplay = document.getElementById('chatDisplay');
+      const persona = personas[currentPersona];
+      
+      // Clear from UI
+      chatDisplay.innerHTML = '';
+      
+      // Clear from localStorage
+      let chatHistory = JSON.parse(localStorage.getItem('clubhouseChatHistory')) || {};
+      if (chatHistory[currentPersona]) {
+        delete chatHistory[currentPersona];
+        localStorage.setItem('clubhouseChatHistory', JSON.stringify(chatHistory));
+      }
+      
+      // Show welcome message
+      const welcomeDiv = document.createElement('div');
+      welcomeDiv.classList.add('text-center', 'text-slate-400', 'dark:text-slate-500', 'text-sm', 'py-4');
+      welcomeDiv.textContent = persona.welcome;
+      chatDisplay.appendChild(welcomeDiv);
+    }
+
+    function setupEventListeners() {
+      document.getElementById('nextFactBtn').addEventListener('click', renderTrivia);
+      
+      // Chat input focus
+      document.getElementById('chatInput').addEventListener('focus', () => {
+        const typingIndicator = document.getElementById('typingIndicator');
+        if (typingIndicator) {
+          typingIndicator.classList.add('hidden');
+        }
+      });
+    }
+  </script>
+</body>
+</html>
