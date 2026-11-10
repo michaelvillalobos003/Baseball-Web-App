@@ -28,8 +28,23 @@
   <!-- Floating Particles Background -->
   <div class="particle-bg" id="particleBg"></div>
 
+  <!-- Guest Modal -->
+  <div id="guestModal" class="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 hidden items-center justify-center p-4">
+    <div class="card max-w-md w-full p-6 text-center relative">
+      <button onclick="closeGuestModal()" class="absolute top-4 right-4 text-gray-400 hover:text-gray-600 text-xl">×</button>
+      <div class="mb-4">
+        <svg class="w-12 h-12 mx-auto text-padresGold" fill="currentColor" viewBox="0 0 24 24">
+          <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
+        </svg>
+      </div>
+      <h3 class="text-lg font-bold text-white mb-2" style="font-family: 'Bebas Neue', sans-serif;">SIGN IN REQUIRED</h3>
+      <p class="text-gray-300 mb-4">Sign in to rate gear and save items to your personal Drip Locker.</p>
+      <button onclick="closeGuestModal()" class="btn btn-primary w-full py-2">Got it</button>
+    </div>
+  </div>
+
   <!-- Top Navigation Bar -->
-  <header class="sticky top-0 z-50 bg-padresBrown/95 backdrop-blur-md text-white shadow-sm">
+  <header class="sticky top-0 z-40 bg-padresBrown/95 backdrop-blur-md text-white shadow-sm">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
       <!-- Logo -->
       <div class="flex items-center space-x-3 cursor-pointer logo-float" onclick="switchView('dashboard')">
@@ -46,7 +61,7 @@
           Clubhouse
         </button>
         <button onclick="switchView('gear')" class="text-sm font-medium text-gray-300 hover:text-padresGold transition-all duration-200 relative">
-          Gear
+          Gear Locker
         </button>
         <button onclick="switchView('lineup')" class="text-sm font-medium text-gray-300 hover:text-padresGold transition-all duration-200 relative">
           Lineup
@@ -67,6 +82,44 @@
       </div>
     </div>
   </header>
+
+  <!-- Site-Wide Search Bar (Visible in Gear Locker) -->
+  <div id="searchBar" class="hidden bg-padresBrown/90 backdrop-blur-md border-b border-white/5">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+      <div class="flex items-center space-x-4">
+        <div class="flex-1 relative">
+          <svg class="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+          </svg>
+          <input id="searchInput" type="text" placeholder="Search gear, players, advice..." 
+                 class="w-full bg-white/10 border border-white/10 rounded-lg pl-10 pr-4 py-2 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-padresGold/50">
+          <button onclick="clearSearch()" class="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-white">×</button>
+        </div>
+        <button onclick="toggleFavoritesView()" class="btn btn-secondary px-4 py-2 text-sm flex items-center space-x-2">
+          <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
+            <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
+          </svg>
+          <span>My Saved Drip</span>
+        </button>
+      </div>
+      <div class="mt-4 flex flex-wrap gap-2">
+        <button onclick="filterByCategory('all')" class="category-pill active">All</button>
+        <button onclick="filterByCategory('Cleats')" class="category-pill">Cleats</button>
+        <button onclick="filterByCategory('Gloves')" class="category-pill">Gloves</button>
+        <button onclick="filterByCategory('Apparel')" class="category-pill">Apparel</button>
+        <button onclick="filterByCategory('Accessories')" class="category-pill">Accessories</button>
+      </div>
+      <div class="mt-4 flex items-center justify-between">
+        <span id="resultsCount" class="text-sm text-gray-300"></span>
+        <select id="sortSelect" onchange="sortGear()" class="bg-white/10 border border-white/10 rounded-lg px-3 py-1.5 text-white text-sm">
+          <option value="default">Default</option>
+          <option value="rating">Highest Rated</option>
+          <option value="newest">Newest Added</option>
+          <option value="alpha">Alphabetical (A-Z)</option>
+        </select>
+      </div>
+    </div>
+  </div>
 
   <!-- Main Content -->
   <main class="flex-grow max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8">
@@ -287,11 +340,29 @@
       </div>
     </section>
 
-    <!-- Placeholder Views -->
-    <section id="view-gear" class="hidden card p-8 text-center">
-      <h2 class="text-xl font-bold text-padresGold" style="font-family: 'Bebas Neue', sans-serif;">GEAR LOCKER</h2>
-      <p class="text-gray-400 mt-2">Coming Soon - Phase 3</p>
+    <!-- View 3: Gear Locker (Phase 3) -->
+    <section id="view-gear" class="hidden">
+      <div class="space-y-8 pt-4">
+        <!-- Gear Grid -->
+        <div id="gearGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+          <!-- Gear items will be inserted here by JavaScript -->
+        </div>
+        
+        <!-- Empty State -->
+        <div id="emptyState" class="hidden text-center py-12">
+          <div class="mb-6">
+            <svg class="w-24 h-24 mx-auto text-padresGold/50" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path>
+            </svg>
+          </div>
+          <h3 class="text-xl font-bold text-padresGold mb-2" style="font-family: 'Bebas Neue', sans-serif;">NO DRIP FOUND</h3>
+          <p class="text-gray-400 mb-6">Try searching for 'cleats', 'Tatis', or 'gloves'</p>
+          <button onclick="clearSearch()" class="btn btn-primary px-6 py-2">Clear Search</button>
+        </div>
+      </div>
     </section>
+
+    <!-- Placeholder Views -->
     <section id="view-lineup" class="hidden card p-8 text-center">
       <h2 class="text-xl font-bold text-padresGold" style="font-family: 'Bebas Neue', sans-serif;">LINEUP BUILDER</h2>
       <p class="text-gray-400 mt-2">Coming Soon - Phase 4</p>
