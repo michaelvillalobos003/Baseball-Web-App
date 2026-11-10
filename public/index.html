@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Padres Fan Portal | Premium Baseball Experience</title>
   <link rel="stylesheet" href="styles.css">
-  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@400;700;900&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@400;500;600;700;900&display=swap" rel="stylesheet">
   <script src="https://cdn.tailwindcss.com"></script>
   <script>
     tailwind.config = {
@@ -23,266 +23,283 @@
     }
   </script>
 </head>
-<body class="bg-slate-100 dark:bg-padresDarkBg text-slate-900 dark:text-slate-100 min-h-screen flex flex-col font-sans">
+<body class="bg-gray-50 dark:bg-padresDarkBg text-slate-900 dark:text-slate-100 min-h-screen flex flex-col font-sans antialiased">
 
   <!-- Floating Particles Background -->
   <div class="particle-bg" id="particleBg"></div>
 
   <!-- Top Navigation Bar -->
-  <header class="sticky top-0 z-50 bg-padresBrown/90 backdrop-blur-md text-white shadow-lg border-b border-padresGold/30">
-    <div class="max-w-7xl mx-auto px-4 h-16 flex items-center justify-between">
+  <header class="sticky top-0 z-50 bg-padresBrown/95 backdrop-blur-md text-white shadow-sm">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+      <!-- Logo -->
       <div class="flex items-center space-x-3 cursor-pointer logo-float" onclick="switchView('dashboard')">
         <span class="text-2xl font-black tracking-wider text-padresGold" style="font-family: 'Bebas Neue', sans-serif;">SD</span>
-        <span class="text-xl font-bold tracking-tight" style="font-family: 'Bebas Neue', sans-serif;">PADRES FAN HUB</span>
+        <span class="text-lg font-bold tracking-tight" style="font-family: 'Bebas Neue', sans-serif;">PADRES</span>
       </div>
 
       <!-- Navigation Links -->
-      <nav class="hidden md:flex items-center space-x-6 text-sm font-semibold">
-        <button onclick="switchView('dashboard')" class="hover:text-padresGold transition-all duration-300 hover:scale-110">Dugout</button>
-        <button onclick="switchView('clubhouse')" class="hover:text-padresGold transition-all duration-300 hover:scale-110">Clubhouse</button>
-        <button onclick="switchView('gear')" class="hover:text-padresGold transition-all duration-300 hover:scale-110">Gear Locker</button>
-        <button onclick="switchView('lineup')" class="hover:text-padresGold transition-all duration-300 hover:scale-110">Lineups</button>
-        <button onclick="switchView('compare')" class="hover:text-padresGold transition-all duration-300 hover:scale-110">Compare</button>
+      <nav class="hidden md:flex items-center space-x-8">
+        <button onclick="switchView('dashboard')" class="text-sm font-medium text-gray-300 hover:text-padresGold transition-all duration-200 relative">
+          Dugout
+        </button>
+        <button onclick="switchView('clubhouse')" class="text-sm font-medium text-gray-300 hover:text-padresGold transition-all duration-200 relative">
+          Clubhouse
+        </button>
+        <button onclick="switchView('gear')" class="text-sm font-medium text-gray-300 hover:text-padresGold transition-all duration-200 relative">
+          Gear
+        </button>
+        <button onclick="switchView('lineup')" class="text-sm font-medium text-gray-300 hover:text-padresGold transition-all duration-200 relative">
+          Lineup
+        </button>
+        <button onclick="switchView('compare')" class="text-sm font-medium text-gray-300 hover:text-padresGold transition-all duration-200 relative">
+          Compare
+        </button>
       </nav>
 
-      <!-- Theme Switcher & Auth Trigger -->
-      <div class="flex items-center space-x-3">
-        <button id="themeToggleBtn" class="p-2 rounded-lg bg-padresGold/10 hover:bg-padresGold/20 text-padresGold transition-all duration-300 hover:scale-110 hover:rotate-12">
+      <!-- Theme & Auth -->
+      <div class="flex items-center space-x-4">
+        <button id="themeToggleBtn" class="p-2 rounded-lg bg-white/10 hover:bg-white/20 text-white transition-all duration-300 hover:rotate-12">
           <span id="themeIcon">☀️</span>
         </button>
-        <button id="loginModalBtn" class="bg-gradient-to-r from-padresGold to-yellow-400 text-padresBrown font-bold px-4 py-2 rounded-lg hover:from-yellow-400 hover:to-padresGold transition-all duration-300 shadow-lg hover:shadow-xl btn-gold">
+        <button id="loginModalBtn" class="btn btn-primary text-sm px-5 py-2">
           Sign In
         </button>
       </div>
     </div>
   </header>
 
-  <!-- Global System Status Banner -->
-  <div id="offlineBanner" class="hidden bg-gradient-to-r from-amber-600 to-orange-600 text-white text-xs font-bold text-center py-2 px-4 animate-pulse">
-    ⚠️ MLB Live API Offline. Currently displaying local cached backup data.
-  </div>
+  <!-- Main Content -->
+  <main class="flex-grow max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8">
 
-  <!-- Main View Container -->
-  <main class="flex-grow max-w-7xl w-full mx-auto px-4 py-6">
-
-    <!-- View 1: Dashboard / Home Dugout -->
-    <section id="view-dashboard" class="space-y-6">
+    <!-- View 1: Dashboard -->
+    <section id="view-dashboard" class="space-y-8">
       
-      <!-- Hero Countdown & Trivia Card Grid -->
-      <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+      <!-- Hero Section -->
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
         
         <!-- Countdown Clock -->
-        <div class="md:col-span-2 bg-white/90 dark:bg-padresCardDark/90 backdrop-blur-sm border border-slate-200/50 dark:border-padresGold/20 rounded-2xl p-6 shadow-xl border-l-8 border-l-padresGold shimmer-effect">
-          <div class="flex justify-between items-center mb-4">
-            <h2 class="text-xs font-black uppercase tracking-widest text-padresGold animate-pulse">Target Event</h2>
-            <span class="text-xs bg-padresGold/20 text-padresGold font-semibold px-2.5 py-1 rounded-full animate-bounce-slow">Petco Park</span>
+        <div class="lg:col-span-2 card card-gold p-6 sm:p-8">
+          <div class="flex justify-between items-start mb-4">
+            <div>
+              <span class="text-xs font-semibold text-padresGold uppercase tracking-wider">Opening Day</span>
+              <h2 class="text-2xl sm:text-3xl font-bold text-white mt-1" style="font-family: 'Bebas Neue', sans-serif;">PETCO PARK COUNTDOWN</h2>
+            </div>
+            <span class="sports-badge badge-gold">2027 Season</span>
           </div>
-          <h3 id="countdownTitle" class="text-2xl font-black mb-2 text-transparent bg-clip-text bg-gradient-to-r from-padresGold to-yellow-400" style="font-family: 'Bebas Neue', sans-serif;">Opening Day Countdown</h3>
-          <div class="grid grid-cols-4 gap-2 text-center mt-4">
-            <div class="bg-slate-100/80 dark:bg-padresDarkBg/80 backdrop-blur-sm p-3 rounded-xl border border-slate-200/50 dark:border-white/5 countdown-box">
-              <span id="timerDays" class="block text-3xl font-black text-padresGold" style="font-family: 'Bebas Neue', sans-serif;">00</span>
-              <span class="text-[10px] uppercase font-bold text-slate-400">Days</span>
+          
+          <div class="grid grid-cols-4 gap-3 sm:gap-4">
+            <div class="countdown-box text-center">
+              <span id="timerDays" class="block text-2xl sm:text-3xl font-black text-padresGold" style="font-family: 'Bebas Neue', sans-serif;">00</span>
+              <span class="text-xs text-gray-400 uppercase font-medium mt-1">Days</span>
             </div>
-            <div class="bg-slate-100/80 dark:bg-padresDarkBg/80 backdrop-blur-sm p-3 rounded-xl border border-slate-200/50 dark:border-white/5 countdown-box">
-              <span id="timerHours" class="block text-3xl font-black text-padresGold" style="font-family: 'Bebas Neue', sans-serif;">00</span>
-              <span class="text-[10px] uppercase font-bold text-slate-400">Hours</span>
+            <div class="countdown-box text-center">
+              <span id="timerHours" class="block text-2xl sm:text-3xl font-black text-padresGold" style="font-family: 'Bebas Neue', sans-serif;">00</span>
+              <span class="text-xs text-gray-400 uppercase font-medium mt-1">Hours</span>
             </div>
-            <div class="bg-slate-100/80 dark:bg-padresDarkBg/80 backdrop-blur-sm p-3 rounded-xl border border-slate-200/50 dark:border-white/5 countdown-box">
-              <span id="timerMinutes" class="block text-3xl font-black text-padresGold" style="font-family: 'Bebas Neue', sans-serif;">00</span>
-              <span class="text-[10px] uppercase font-bold text-slate-400">Mins</span>
+            <div class="countdown-box text-center">
+              <span id="timerMinutes" class="block text-2xl sm:text-3xl font-black text-padresGold" style="font-family: 'Bebas Neue', sans-serif;">00</span>
+              <span class="text-xs text-gray-400 uppercase font-medium mt-1">Minutes</span>
             </div>
-            <div class="bg-slate-100/80 dark:bg-padresDarkBg/80 backdrop-blur-sm p-3 rounded-xl border border-slate-200/50 dark:border-white/5 countdown-box">
-              <span id="timerSeconds" class="block text-3xl font-black text-padresGold" style="font-family: 'Bebas Neue', sans-serif;">00</span>
-              <span class="text-[10px] uppercase font-bold text-slate-400">Secs</span>
+            <div class="countdown-box text-center">
+              <span id="timerSeconds" class="block text-2xl sm:text-3xl font-black text-padresGold" style="font-family: 'Bebas Neue', sans-serif;">00</span>
+              <span class="text-xs text-gray-400 uppercase font-medium mt-1">Seconds</span>
             </div>
           </div>
         </div>
 
-        <!-- Daily Fun Fact Widget -->
-        <div class="bg-white/90 dark:bg-padresCardDark/90 backdrop-blur-sm border border-slate-200/50 dark:border-padresGold/20 rounded-2xl p-6 shadow-xl flex flex-col justify-between shimmer-effect">
-          <div>
-            <div class="flex items-center justify-between mb-3">
-              <span class="text-xs font-black uppercase tracking-widest text-padresGold" style="font-family: 'Bebas Neue', sans-serif;">Daily Trivia</span>
-              <button id="nextFactBtn" class="text-xs text-slate-400 hover:text-padresGold transition-all duration-300 hover:scale-125">Shuffle 🎲</button>
-            </div>
-            <p id="funFactText" class="text-sm font-medium italic text-slate-700 dark:text-slate-300 transition-all duration-500">
-              Loading Padres trivia...
-            </p>
+        <!-- Trivia Card -->
+        <div class="card p-6 sm:p-8">
+          <div class="flex justify-between items-start mb-4">
+            <span class="text-xs font-semibold text-padresGold uppercase tracking-wider">Daily Trivia</span>
+            <button id="nextFactBtn" class="text-padresGold hover:text-padresGold/80 transition-colors">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
+              </svg>
+            </button>
           </div>
-          <button id="quoteModalBtn" class="mt-4 w-full py-2 bg-gradient-to-r from-padresGold/20 to-padresGold/10 hover:from-padresGold/30 hover:to-padresGold/20 border border-padresGold/30 text-padresGold font-bold text-xs rounded-xl transition-all duration-300 hover:scale-105 shadow-lg">
-            ✨ Get Player Inspiration
+          <p id="funFactText" class="text-sm font-medium text-gray-700 dark:text-gray-300 italic leading-relaxed">
+            Loading Padres trivia...
+          </p>
+          <button id="quoteModalBtn" class="mt-6 w-full btn btn-secondary text-sm py-2">
+            Get Inspiration
           </button>
         </div>
       </div>
 
-      <!-- Quick Roster Overview -->
-      <div class="bg-white/90 dark:bg-padresCardDark/90 backdrop-blur-sm border border-slate-200/50 dark:border-padresGold/20 rounded-2xl p-6 shadow-xl">
-        <div class="flex items-center justify-between mb-4 header-border-glow relative">
-          <h3 class="text-lg font-bold" style="font-family: 'Bebas Neue', sans-serif;">Featured Padres Stars</h3>
-          <span class="text-xs font-normal text-slate-400">MLB Roster Data</span>
+      <!-- Featured Players -->
+      <div class="card p-6 sm:p-8">
+        <div class="flex items-center justify-between mb-6 header-border-glow relative">
+          <div>
+            <h3 class="text-lg font-bold text-white" style="font-family: 'Bebas Neue', sans-serif;">FEATURED PLAYERS</h3>
+            <p class="text-xs text-gray-400 mt-1">2027 Padres Roster</p>
+          </div>
         </div>
-        <div id="heroRosterGrid" class="grid grid-cols-2 md:grid-cols-4 gap-4">
+        <div id="heroRosterGrid" class="grid grid-cols-2 sm:grid-cols-4 gap-4">
           <!-- Populated by app.js -->
         </div>
       </div>
     </section>
 
-    <!-- View 2: Expert Clubhouse (Phase 2) -->
-    <section id="view-clubhouse" class="hidden space-y-6">
+    <!-- View 2: Clubhouse -->
+    <section id="view-clubhouse" class="hidden space-y-8">
       <!-- Clubhouse Header -->
-      <div class="bg-white/90 dark:bg-padresCardDark/90 backdrop-blur-sm border border-slate-200/50 dark:border-padresGold/20 rounded-2xl p-6 shadow-xl border-l-8 border-l-padresGold animate-fade-in">
-        <div class="flex items-center justify-between mb-4">
+      <div class="card card-gold p-6 sm:p-8">
+        <div class="flex items-center justify-between">
           <div>
-            <h2 class="text-3xl font-black text-transparent bg-clip-text bg-gradient-to-r from-padresGold to-yellow-400" style="font-family: 'Bebas Neue', sans-serif;">EXPERT CLUBHOUSE</h2>
-            <p class="text-sm text-slate-400 mt-1 animate-pulse">Chat with Padres AI Personas</p>
+            <span class="text-xs font-semibold text-padresGold uppercase tracking-wider">AI Expert</span>
+            <h2 class="text-2xl sm:text-3xl font-bold text-white mt-1" style="font-family: 'Bebas Neue', sans-serif;">EXPERT CLUBHOUSE</h2>
+            <p class="text-sm text-gray-300 mt-2">Chat with Padres AI Personas</p>
           </div>
-          <div class="flex items-center space-x-2">
-            <span class="text-xs bg-gradient-to-r from-green-500 to-emerald-500 text-white font-semibold px-3 py-1 rounded-full online-badge">✓ ONLINE</span>
-          </div>
+          <span class="sports-badge badge-green online-badge">● Online</span>
         </div>
-        <p class="text-sm text-slate-600 dark:text-slate-300 animate-fade-in">
-          Select a player persona to start chatting. Each expert has unique insights and advice tailored to their role on the team.
-        </p>
       </div>
 
-      <!-- Persona Cards Grid -->
-      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-        <!-- William Contreras - Catcher & Playmaker -->
-        <div class="tilt-card bg-white/90 dark:bg-padresCardDark/90 backdrop-blur-sm border border-slate-200/50 dark:border-padresGold/20 rounded-2xl p-5 shadow-xl cursor-pointer persona-card shimmer-effect" 
+      <!-- Persona Cards -->
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        <!-- William Contreras -->
+        <div class="tilt-card card p-5 cursor-pointer persona-card" 
              data-persona="contreras" onclick="selectPersona('contreras')">
           <div class="flex flex-col items-center text-center">
-            <div class="relative mb-3">
-              <div class="absolute inset-0 bg-gradient-to-br from-padresGold/20 to-transparent rounded-full animate-spin-slow"></div>
+            <div class="relative mb-4">
+              <div class="absolute inset-0 bg-gradient-to-br from-padresGold/10 to-transparent rounded-full"></div>
               <img src="https://img.mlbstatic.com/mlb-photos/image/upload/v1/people/669221/headshot/67/current" 
-                   alt="William Contreras" class="w-20 h-20 rounded-full border-4 border-padresGold object-cover relative z-10">
-              <span class="absolute -top-1 -right-1 bg-padresGold text-padresBrown text-xs font-bold px-2 py-1 rounded-full animate-pulse">C</span>
+                   alt="William Contreras" class="w-16 h-16 rounded-full border-2 border-padresGold object-cover relative z-10">
+              <span class="absolute -top-1 -right-1 bg-padresGold text-padresBrown text-[10px] font-bold px-2 py-0.5 rounded-full">C</span>
             </div>
-            <h3 class="text-lg font-bold text-padresGold" style="font-family: 'Bebas Neue', sans-serif;">William Contreras</h3>
-            <p class="text-sm text-slate-600 dark:text-slate-300 mb-2">Catcher & Playmaker</p>
-            <div class="text-xs text-slate-500 dark:text-slate-400 space-y-1">
-              <span class="block">✓ Pitch framing</span>
-              <span class="block">✓ Game calling</span>
-              <span class="block">✓ Plate discipline</span>
+            <h3 class="text-sm font-bold text-padresGold" style="font-family: 'Bebas Neue', sans-serif;">WILLIAM CONTRERAS</h3>
+            <p class="text-xs text-gray-400 mt-1">Catcher & Playmaker</p>
+            <div class="mt-3 space-y-1">
+              <span class="block text-[10px] text-gray-500">✓ Pitch Framing</span>
+              <span class="block text-[10px] text-gray-500">✓ Game Calling</span>
+              <span class="block text-[10px] text-gray-500">✓ Plate Discipline</span>
             </div>
           </div>
         </div>
 
-        <!-- Fernando Tatis Jr. - Drip & Style Icon -->
-        <div class="tilt-card bg-white/90 dark:bg-padresCardDark/90 backdrop-blur-sm border border-slate-200/50 dark:border-padresGold/20 rounded-2xl p-5 shadow-xl cursor-pointer persona-card shimmer-effect" 
+        <!-- Fernando Tatis Jr. -->
+        <div class="tilt-card card p-5 cursor-pointer persona-card" 
              data-persona="tatis" onclick="selectPersona('tatis')">
           <div class="flex flex-col items-center text-center">
-            <div class="relative mb-3">
-              <div class="absolute inset-0 bg-gradient-to-br from-padresGold/20 to-transparent rounded-full animate-spin-slow"></div>
+            <div class="relative mb-4">
+              <div class="absolute inset-0 bg-gradient-to-br from-padresGold/10 to-transparent rounded-full"></div>
               <img src="https://img.mlbstatic.com/mlb-photos/image/upload/v1/people/665487/headshot/67/current" 
-                   alt="Fernando Tatis Jr." class="w-20 h-20 rounded-full border-4 border-padresGold object-cover relative z-10">
-              <span class="absolute -top-1 -right-1 bg-padresGold text-padresBrown text-xs font-bold px-2 py-1 rounded-full animate-pulse">RF</span>
+                   alt="Fernando Tatis Jr." class="w-16 h-16 rounded-full border-2 border-padresGold object-cover relative z-10">
+              <span class="absolute -top-1 -right-1 bg-padresGold text-padresBrown text-[10px] font-bold px-2 py-0.5 rounded-full">RF</span>
             </div>
-            <h3 class="text-lg font-bold text-padresGold" style="font-family: 'Bebas Neue', sans-serif;">Fernando Tatis Jr.</h3>
-            <p class="text-sm text-slate-600 dark:text-slate-300 mb-2">Drip & Style Icon</p>
-            <div class="text-xs text-slate-500 dark:text-slate-400 space-y-1">
-              <span class="block">✓ Custom cleats</span>
-              <span class="block">✓ Batting gloves</span>
-              <span class="block">✓ Game-day drip</span>
+            <h3 class="text-sm font-bold text-padresGold" style="font-family: 'Bebas Neue', sans-serif;">FERNANDO TATIS JR.</h3>
+            <p class="text-xs text-gray-400 mt-1">Drip & Style Icon</p>
+            <div class="mt-3 space-y-1">
+              <span class="block text-[10px] text-gray-500">✓ Custom Cleats</span>
+              <span class="block text-[10px] text-gray-500">✓ Batting Gloves</span>
+              <span class="block text-[10px] text-gray-500">✓ Game-Day Drip</span>
             </div>
           </div>
         </div>
 
-        <!-- Manny Machado - Hitting & Defense Specialist -->
-        <div class="tilt-card bg-white/90 dark:bg-padresCardDark/90 backdrop-blur-sm border border-slate-200/50 dark:border-padresGold/20 rounded-2xl p-5 shadow-xl cursor-pointer persona-card shimmer-effect" 
+        <!-- Manny Machado -->
+        <div class="tilt-card card p-5 cursor-pointer persona-card" 
              data-persona="machado" onclick="selectPersona('machado')">
           <div class="flex flex-col items-center text-center">
-            <div class="relative mb-3">
-              <div class="absolute inset-0 bg-gradient-to-br from-padresGold/20 to-transparent rounded-full animate-spin-slow"></div>
+            <div class="relative mb-4">
+              <div class="absolute inset-0 bg-gradient-to-br from-padresGold/10 to-transparent rounded-full"></div>
               <img src="https://img.mlbstatic.com/mlb-photos/image/upload/v1/people/592518/headshot/67/current" 
-                   alt="Manny Machado" class="w-20 h-20 rounded-full border-4 border-padresGold object-cover relative z-10">
-              <span class="absolute -top-1 -right-1 bg-padresGold text-padresBrown text-xs font-bold px-2 py-1 rounded-full animate-pulse">3B</span>
+                   alt="Manny Machado" class="w-16 h-16 rounded-full border-2 border-padresGold object-cover relative z-10">
+              <span class="absolute -top-1 -right-1 bg-padresGold text-padresBrown text-[10px] font-bold px-2 py-0.5 rounded-full">3B</span>
             </div>
-            <h3 class="text-lg font-bold text-padresGold" style="font-family: 'Bebas Neue', sans-serif;">Manny Machado</h3>
-            <p class="text-sm text-slate-600 dark:text-slate-300 mb-2">Hitting & Defense Specialist</p>
-            <div class="text-xs text-slate-500 dark:text-slate-400 space-y-1">
-              <span class="block">✓ Swing mechanics</span>
-              <span class="block">✓ Third base defense</span>
-              <span class="block">✓ Leadership</span>
+            <h3 class="text-sm font-bold text-padresGold" style="font-family: 'Bebas Neue', sans-serif;">MANNY MACHADO</h3>
+            <p class="text-xs text-gray-400 mt-1">Hitting & Defense</p>
+            <div class="mt-3 space-y-1">
+              <span class="block text-[10px] text-gray-500">✓ Swing Mechanics</span>
+              <span class="block text-[10px] text-gray-500">✓ Third Base D</span>
+              <span class="block text-[10px] text-gray-500">✓ Leadership</span>
             </div>
           </div>
         </div>
 
-        <!-- Jackson Merrill - Stats & Fantasy Scout -->
-        <div class="tilt-card bg-white/90 dark:bg-padresCardDark/90 backdrop-blur-sm border border-slate-200/50 dark:border-padresGold/20 rounded-2xl p-5 shadow-xl cursor-pointer persona-card shimmer-effect" 
+        <!-- Jackson Merrill -->
+        <div class="tilt-card card p-5 cursor-pointer persona-card" 
              data-persona="merrill" onclick="selectPersona('merrill')">
           <div class="flex flex-col items-center text-center">
-            <div class="relative mb-3">
-              <div class="absolute inset-0 bg-gradient-to-br from-padresGold/20 to-transparent rounded-full animate-spin-slow"></div>
+            <div class="relative mb-4">
+              <div class="absolute inset-0 bg-gradient-to-br from-padresGold/10 to-transparent rounded-full"></div>
               <img src="https://img.mlbstatic.com/mlb-photos/image/upload/v1/people/701538/headshot/67/current" 
-                   alt="Jackson Merrill" class="w-20 h-20 rounded-full border-4 border-padresGold object-cover relative z-10">
-              <span class="absolute -top-1 -right-1 bg-padresGold text-padresBrown text-xs font-bold px-2 py-1 rounded-full animate-pulse">CF</span>
+                   alt="Jackson Merrill" class="w-16 h-16 rounded-full border-2 border-padresGold object-cover relative z-10">
+              <span class="absolute -top-1 -right-1 bg-padresGold text-padresBrown text-[10px] font-bold px-2 py-0.5 rounded-full">CF</span>
             </div>
-            <h3 class="text-lg font-bold text-padresGold" style="font-family: 'Bebas Neue', sans-serif;">Jackson Merrill</h3>
-            <p class="text-sm text-slate-600 dark:text-slate-300 mb-2">Stats & Fantasy Scout</p>
-            <div class="text-xs text-slate-500 dark:text-slate-400 space-y-1">
-              <span class="block">✓ Breakout metrics</span>
-              <span class="block">✓ Launch angles</span>
-              <span class="block">✓ Outfield play</span>
+            <h3 class="text-sm font-bold text-padresGold" style="font-family: 'Bebas Neue', sans-serif;">JACKSON MERRILL</h3>
+            <p class="text-xs text-gray-400 mt-1">Stats & Fantasy</p>
+            <div class="mt-3 space-y-1">
+              <span class="block text-[10px] text-gray-500">✓ Breakout Metrics</span>
+              <span class="block text-[10px] text-gray-500">✓ Launch Angles</span>
+              <span class="block text-[10px] text-gray-500">✓ Outfield Play</span>
             </div>
           </div>
         </div>
       </div>
 
-      <!-- Active Persona Chat Section -->
-      <div id="chatSection" class="hidden bg-white/90 dark:bg-padresCardDark/90 backdrop-blur-sm border border-slate-200/50 dark:border-padresGold/20 rounded-2xl shadow-xl overflow-hidden animate-zoom-in">
-        <!-- Active Persona Header -->
-        <div id="activePersonaHeader" class="bg-gradient-to-r from-padresBrown to-padresBrown/80 p-4 flex items-center justify-between border-b border-padresGold/20">
+      <!-- Chat Section -->
+      <div id="chatSection" class="hidden card overflow-hidden animate-zoom-in">
+        <!-- Header -->
+        <div id="activePersonaHeader" class="bg-padresBrown p-4 flex items-center justify-between">
           <div class="flex items-center space-x-3">
             <div class="relative">
-              <img id="activePersonaAvatar" src="" alt="" class="w-12 h-12 rounded-full border-3 border-padresGold object-cover animate-pulse">
-              <div class="absolute inset-0 bg-gradient-to-br from-padresGold/30 to-transparent rounded-full animate-spin-slow"></div>
+              <img id="activePersonaAvatar" src="" alt="" class="w-10 h-10 rounded-full border-2 border-padresGold object-cover">
             </div>
             <div>
-              <h3 id="activePersonaName" class="text-lg font-bold text-padresGold" style="font-family: 'Bebas Neue', sans-serif;"></h3>
-              <p id="activePersonaTitle" class="text-sm text-slate-300"></p>
+              <h3 id="activePersonaName" class="font-bold text-padresGold text-sm" style="font-family: 'Bebas Neue', sans-serif;"></h3>
+              <p id="activePersonaTitle" class="text-xs text-gray-300"></p>
             </div>
           </div>
-          <div class="flex items-center space-x-2">
-            <span id="activePersonaStatus" class="text-xs bg-green-500/20 text-green-400 font-semibold px-2 py-1 rounded-full online-badge">● ONLINE</span>
-            <button onclick="clearChat()" class="text-xs text-slate-400 hover:text-padresGold transition-all duration-300 hover:scale-125">Clear Chat</button>
+          <div class="flex items-center space-x-3">
+            <span class="sports-badge badge-green online-badge text-[10px]">● Online</span>
+            <button onclick="clearChat()" class="text-xs text-gray-400 hover:text-white transition-colors">Clear</button>
           </div>
         </div>
 
-        <!-- Chat Display Area -->
-        <div id="chatDisplay" class="h-96 overflow-y-auto p-4 space-y-4 bg-slate-50/50 dark:bg-padresDarkBg/50">
-          <div id="welcomeMessage" class="text-center text-slate-400 dark:text-slate-500 text-sm py-4 welcome-message">
+        <!-- Chat Display -->
+        <div id="chatDisplay" class="h-96 overflow-y-auto p-4 space-y-3 bg-gray-50 dark:bg-padresDarkBg/50">
+          <div id="welcomeMessage" class="text-center text-gray-500 dark:text-gray-400 text-sm py-4 welcome-message">
             Start a conversation! Type your question or use a quick topic below.
           </div>
         </div>
 
-        <!-- Quick Topic Buttons -->
-        <div class="p-4 border-t border-slate-200/50 dark:border-white/5 bg-slate-50/50 dark:bg-padresDarkBg/50">
-          <div class="flex flex-wrap gap-2 mb-3">
-            <button onclick="useQuickTopic('Fix My Swing')" class="px-3 py-1.5 bg-gradient-to-r from-padresGold/20 to-padresGold/10 hover:from-padresGold/30 hover:to-padresGold/20 border border-padresGold/30 text-padresGold text-xs font-semibold rounded-lg transition-all duration-300 hover:scale-105 hover:shadow-lg btn-gold">Fix My Swing</button>
-            <button onclick="useQuickTopic('Cleat Drip Recommendations')" class="px-3 py-1.5 bg-gradient-to-r from-padresGold/20 to-padresGold/10 hover:from-padresGold/30 hover:to-padresGold/20 border border-padresGold/30 text-padresGold text-xs font-semibold rounded-lg transition-all duration-300 hover:scale-105 hover:shadow-lg btn-gold">Cleat Drip</button>
-            <button onclick="useQuickTopic('Petco Park Tips')" class="px-3 py-1.5 bg-gradient-to-r from-padresGold/20 to-padresGold/10 hover:from-padresGold/30 hover:to-padresGold/20 border border-padresGold/30 text-padresGold text-xs font-semibold rounded-lg transition-all duration-300 hover:scale-105 hover:shadow-lg btn-gold">Petco Park</button>
-            <button onclick="useQuickTopic('Breakout Stats')" class="px-3 py-1.5 bg-gradient-to-r from-padresGold/20 to-padresGold/10 hover:from-padresGold/30 hover:to-padresGold/20 border border-padresGold/30 text-padresGold text-xs font-semibold rounded-lg transition-all duration-300 hover:scale-105 hover:shadow-lg btn-gold">Breakout Stats</button>
+        <!-- Quick Topics -->
+        <div class="p-4 border-t border-gray-100 dark:border-white/5 bg-gray-50/50 dark:bg-padresDarkBg/50">
+          <div class="flex flex-wrap gap-2">
+            <button onclick="useQuickTopic('Fix My Swing')" class="topic-btn">Fix My Swing</button>
+            <button onclick="useQuickTopic('Cleat Drip Recommendations')" class="topic-btn">Cleat Drip</button>
+            <button onclick="useQuickTopic('Petco Park Tips')" class="topic-btn">Petco Park Tips</button>
+            <button onclick="useQuickTopic('Breakout Stats')" class="topic-btn">Breakout Stats</button>
           </div>
         </div>
 
-        <!-- Chat Input Area -->
-        <div class="p-4 border-t border-slate-200/50 dark:border-white/5 bg-slate-50/50 dark:bg-padresDarkBg/50">
-          <div class="flex items-center space-x-2">
+        <!-- Input -->
+        <div class="p-4 border-t border-gray-100 dark:border-white/5 bg-gray-50/50 dark:bg-padresDarkBg/50">
+          <div class="flex items-center space-x-3">
             <input id="chatInput" type="text" placeholder="Type your message..." 
-                   class="flex-grow px-4 py-2 rounded-lg bg-white/80 dark:bg-padresCardDark/80 border border-slate-200/50 dark:border-padresGold/20 text-slate-900 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-padresGold/50 transition-all duration-300">
-            <button onclick="sendMessage()" class="bg-gradient-to-r from-padresGold to-yellow-400 text-padresBrown font-bold px-4 py-2 rounded-lg hover:from-yellow-400 hover:to-padresGold transition-all duration-300 shadow-lg hover:shadow-xl btn-gold">
+                   class="flex-grow">
+            <button onclick="sendMessage()" class="btn btn-primary px-5 py-2 text-sm">
               Send
             </button>
           </div>
-          <div id="typingIndicator" class="text-xs text-padresGold mt-1 hidden typing-indicator"></div>
+          <div id="typingIndicator" class="text-xs text-padresGold mt-2 hidden typing-indicator"></div>
         </div>
       </div>
     </section>
 
-    <!-- Placeholders for Views 3-5 -->
-    <section id="view-gear" class="hidden p-8 text-center"><h2 class="text-xl font-bold text-padresGold" style="font-family: 'Bebas Neue', sans-serif;">Gear Locker (Phase 3)</h2></section>
-    <section id="view-lineup" class="hidden p-8 text-center"><h2 class="text-xl font-bold text-padresGold" style="font-family: 'Bebas Neue', sans-serif;">Lineup Builder (Phase 4)</h2></section>
-    <section id="view-compare" class="hidden p-8 text-center"><h2 class="text-xl font-bold text-padresGold" style="font-family: 'Bebas Neue', sans-serif;">Player Comparison (Phase 5)</h2></section>
+    <!-- Placeholder Views -->
+    <section id="view-gear" class="hidden card p-8 text-center">
+      <h2 class="text-xl font-bold text-padresGold" style="font-family: 'Bebas Neue', sans-serif;">GEAR LOCKER</h2>
+      <p class="text-gray-400 mt-2">Coming Soon - Phase 3</p>
+    </section>
+    <section id="view-lineup" class="hidden card p-8 text-center">
+      <h2 class="text-xl font-bold text-padresGold" style="font-family: 'Bebas Neue', sans-serif;">LINEUP BUILDER</h2>
+      <p class="text-gray-400 mt-2">Coming Soon - Phase 4</p>
+    </section>
+    <section id="view-compare" class="hidden card p-8 text-center">
+      <h2 class="text-xl font-bold text-padresGold" style="font-family: 'Bebas Neue', sans-serif;">PLAYER COMPARE</h2>
+      <p class="text-gray-400 mt-2">Coming Soon - Phase 5</p>
+    </section>
 
   </main>
 
