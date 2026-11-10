@@ -1,0 +1,483 @@
+/* ============================================
+   San Diego Padres Fan Portal - Premium Styles
+   ============================================ */
+
+/* Custom Properties */
+:root {
+  --gold-primary: #FFC425;
+  --gold-light: #FFD700;
+  --gold-dark: #FFB300;
+  --brown-dark: #2F241D;
+  --brown-darker: #181412;
+  --card-dark: #241E1A;
+}
+
+/* Base Styles */
+body {
+  font-family: 'Inter', sans-serif;
+  background: linear-gradient(135deg, #181412 0%, #2F241D 50%, #181412 100%);
+}
+
+.dark body {
+  background: linear-gradient(135deg, #181412 0%, #2F241D 50%, #181412 100%);
+}
+
+/* ============================================
+   Pinstripe Background Pattern
+   ============================================ */
+body::before {
+  content: '';
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-image: 
+    repeating-linear-gradient(
+      45deg,
+      transparent,
+      transparent 10px,
+      rgba(255, 196, 37, 0.03) 10px,
+      rgba(255, 196, 37, 0.03) 20px
+    );
+  pointer-events: none;
+  z-index: -2;
+}
+
+/* ============================================
+   Floating Particles Background
+   ============================================ */
+.particle-bg {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: -1;
+  overflow: hidden;
+}
+
+.particle {
+  position: absolute;
+  background: radial-gradient(circle, rgba(255,196,37,0.8) 0%, rgba(255,196,37,0) 70%);
+  border-radius: 50%;
+  animation: float-particle 15s infinite linear;
+  opacity: 0.6;
+}
+
+@keyframes float-particle {
+  0% { 
+    transform: translateY(0) rotate(0deg); 
+    opacity: 0; 
+  }
+  10% { 
+    opacity: 0.6; 
+  }
+  90% { 
+    opacity: 0.6; 
+  }
+  100% { 
+    transform: translateY(-100vh) rotate(360deg); 
+    opacity: 0; 
+  }
+}
+
+/* ============================================
+   Glassmorphism Card Effects
+   ============================================ */
+.glassmorph {
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 196, 37, 0.2);
+}
+
+.dark .glassmorph-dark {
+  background: rgba(47, 36, 29, 0.8);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 196, 37, 0.2);
+}
+
+/* Gold Border Glow */
+gold-border-glow {
+  border: 1px solid var(--gold-primary);
+  box-shadow: 0 0 20px rgba(255, 196, 37, 0.3);
+}
+
+/* ============================================
+   3D Tilt Card Animation
+   ============================================ */
+.tilt-card {
+  transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  transform-style: preserve-3d;
+  position: relative;
+  cursor: pointer;
+}
+
+.tilt-card:hover {
+  transform: translateY(-10px) rotateX(5deg) rotateY(5deg) scale(1.03);
+  box-shadow: 0 25px 50px -12px rgba(255, 196, 37, 0.4);
+}
+
+.tilt-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(135deg, rgba(255,196,37,0.1) 0%, rgba(255,196,37,0) 50%);
+  border-radius: inherit;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  pointer-events: none;
+}
+
+.tilt-card:hover::before {
+  opacity: 1;
+}
+
+/* ============================================
+   Gold Glow Effects
+   ============================================ */
+.gold-glow {
+  box-shadow: 0 0 20px rgba(255, 196, 37, 0.4);
+  transition: all 0.3s ease;
+}
+
+.gold-glow:hover {
+  box-shadow: 0 0 40px rgba(255, 196, 37, 0.8), 0 0 60px rgba(255, 196, 37, 0.3);
+  transform: translateY(-3px) scale(1.02);
+}
+
+/* Persona Card Selected State */
+.persona-card-selected {
+  border: 2px solid var(--gold-primary);
+  box-shadow: 0 0 30px rgba(255, 196, 37, 0.6), inset 0 0 30px rgba(255, 196, 37, 0.1);
+  animation: pulse-selected 2s ease-in-out infinite;
+}
+
+@keyframes pulse-selected {
+  0%, 100% { 
+    box-shadow: 0 0 30px rgba(255, 196, 37, 0.6), inset 0 0 30px rgba(255, 196, 37, 0.1); 
+  }
+  50% { 
+    box-shadow: 0 0 50px rgba(255, 196, 37, 0.8), inset 0 0 40px rgba(255, 196, 37, 0.2); 
+  }
+}
+
+/* ============================================
+   Chat Bubble Styles
+   ============================================ */
+.chat-bubble-user {
+  background: linear-gradient(135deg, #FFC425 0%, #FFB300 100%);
+  animation: slide-in-right 0.3s ease-out;
+  box-shadow: 0 4px 15px rgba(255, 196, 37, 0.3);
+}
+
+.chat-bubble-persona {
+  background: linear-gradient(135deg, #2F241D 0%, #181412 100%);
+  border: 1px solid rgba(255, 196, 37, 0.5);
+  box-shadow: 0 4px 15px rgba(255, 196, 37, 0.2);
+  animation: slide-in-left 0.3s ease-out;
+}
+
+@keyframes slide-in-right {
+  from { 
+    transform: translateX(20px); 
+    opacity: 0; 
+  }
+  to { 
+    transform: translateX(0); 
+    opacity: 1; 
+  }
+}
+
+@keyframes slide-in-left {
+  from { 
+    transform: translateX(-20px); 
+    opacity: 0; 
+  }
+  to { 
+    transform: translateX(0); 
+    opacity: 1; 
+  }
+}
+
+/* ============================================
+   Header Border Glow Animation
+   ============================================ */
+.header-border-glow::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: -100%;
+  width: 200%;
+  height: 3px;
+  background: linear-gradient(90deg, transparent, #FFC425, transparent);
+  animation: border-glow 3s linear infinite;
+}
+
+@keyframes border-glow {
+  0% { left: -100%; }
+  100% { left: 100%; }
+}
+
+/* ============================================
+   Shimmer Effect
+   ============================================ */
+.shimmer-effect::after {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -100%;
+  width: 200%;
+  height: 200%;
+  background: linear-gradient(
+    to bottom right,
+    rgba(255, 255, 255, 0.3) 0%,
+    rgba(255, 255, 255, 0) 60%
+  );
+  transform: rotate(30deg);
+  animation: shimmer 2s infinite;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.shimmer-effect:hover::after {
+  opacity: 1;
+}
+
+@keyframes shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+
+/* ============================================
+   Countdown Box Hover
+   ============================================ */
+.countdown-box {
+  transition: all 0.3s ease;
+}
+
+.countdown-box:hover {
+  transform: translateY(-5px) scale(1.05);
+  box-shadow: 0 10px 30px rgba(255, 196, 37, 0.5);
+}
+
+/* ============================================
+   Button Styles
+   ============================================ */
+.btn-gold {
+  position: relative;
+  overflow: hidden;
+  transition: all 0.3s ease;
+}
+
+.btn-gold::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 0;
+  height: 0;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.3);
+  transform: translate(-50%, -50%);
+  transition: width 0.6s, height 0.6s;
+}
+
+.btn-gold:hover::before {
+  width: 300px;
+  height: 300px;
+}
+
+.btn-gold:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 25px rgba(255, 196, 37, 0.4);
+}
+
+/* ============================================
+   Typing Indicator
+   ============================================ */
+.typing-indicator {
+  animation: blink-cursor 0.7s infinite;
+}
+
+@keyframes blink-cursor {
+  0%, 50% { opacity: 1; }
+  51%, 100% { opacity: 0; }
+}
+
+/* Online Badge Pulse */
+.online-badge {
+  animation: pulse-online 2s ease-in-out infinite;
+}
+
+@keyframes pulse-online {
+  0%, 100% { 
+    box-shadow: 0 0 0 0 rgba(74, 222, 128, 0.4); 
+  }
+  50% { 
+    box-shadow: 0 0 0 10px rgba(74, 222, 128, 0); 
+  }
+}
+
+/* ============================================
+   Input Focus Effects
+   ============================================ */
+#chatInput:focus {
+  box-shadow: 0 0 15px rgba(255, 196, 37, 0.5);
+  border-color: #FFC425;
+}
+
+/* ============================================
+   Scrollbar Styling
+   ============================================ */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #2F241D;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #FFC425;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #FFB300;
+}
+
+/* ============================================
+   Animation Utilities
+   ============================================ */
+.animate-fade-in {
+  animation: fadeIn 0.6s ease-out;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.animate-zoom-in {
+  animation: zoomIn 0.4s ease-out;
+}
+
+@keyframes zoomIn {
+  from { 
+    transform: scale(0.9); 
+    opacity: 0; 
+  }
+  to { 
+    transform: scale(1); 
+    opacity: 1; 
+  }
+}
+
+.animate-bounce-slow {
+  animation: bounce 3s infinite;
+}
+
+@keyframes bounce {
+  0%, 100% { 
+    transform: translateY(0); 
+  }
+  50% { 
+    transform: translateY(-5px); 
+  }
+}
+
+/* ============================================
+   Spin Animation (for rotating elements)
+   ============================================ */
+.animate-spin-slow {
+  animation: spin 10s linear infinite;
+}
+
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+/* ============================================
+   Logo Float Animation
+   ============================================ */
+.logo-float {
+  animation: float 3s ease-in-out infinite;
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-5px); }
+}
+
+/* ============================================
+   Persona Card Entrance Animation
+   ============================================ */
+.persona-card {
+  opacity: 0;
+  transform: translateY(20px);
+  animation: fadeInUp 0.6s ease-out forwards;
+}
+
+.persona-card:nth-child(1) { animation-delay: 0.1s; }
+.persona-card:nth-child(2) { animation-delay: 0.2s; }
+.persona-card:nth-child(3) { animation-delay: 0.3s; }
+.persona-card:nth-child(4) { animation-delay: 0.4s; }
+
+@keyframes fadeInUp {
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ============================================
+   Welcome Message Animation
+   ============================================ */
+.welcome-message {
+  animation: fadeIn 1s ease-out 0.5s both;
+}
+
+/* ============================================
+   Responsive Adjustments
+   ============================================ */
+@media (max-width: 768px) {
+  .tilt-card:hover {
+    transform: translateY(-5px) scale(1.02);
+  }
+  
+  .particle-bg {
+    display: none;
+  }
+}
+
+/* ============================================
+   Sports Badge Styles
+   ============================================ */
+.sports-badge {
+  display: inline-block;
+  padding: 2px 8px;
+  border-radius: 12px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.badge-gold {
+  background: linear-gradient(135deg, #FFC425, #FFB300);
+  color: #2F241D;
+}
+
+.badge-brown {
+  background: #2F241D;
+  color: #FFC425;
+  border: 1px solid #FFC425;
+}

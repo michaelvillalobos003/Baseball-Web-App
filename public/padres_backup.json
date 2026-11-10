@@ -1,0 +1,153 @@
+{
+  "roster": [
+    {
+      "id": 665487,
+      "name": "Fernando Tatis Jr.",
+      "position": "Right Fielder",
+      "positionAbbr": "RF",
+      "jerseyNumber": "23",
+      "headshotUrl": "https://img.mlbstatic.com/mlb-photos/image/upload/v1/people/665487/headshot/67/current",
+      "stats": {
+        "season": {
+          "hr": 25,
+          "avg": ".276",
+          "rbi": 78,
+          "ops": ".812",
+          "sb": 15
+        },
+        "career": {
+          "hr": 150,
+          "avg": ".280",
+          "rbi": 450,
+          "ops": ".850"
+        }
+      },
+      "bio": "Fernando Tatis Jr. is the electrifying face of the Padres franchise. Known for his incredible athleticism, power at the plate, and dazzling plays in the outfield, Tatis brings energy and excitement to every game. His signature style both on and off the field has made him a fan favorite.",
+      "nickname": "El Nino"
+    },
+    {
+      "id": 592518,
+      "name": "Manny Machado",
+      "position": "Third Baseman",
+      "positionAbbr": "3B",
+      "jerseyNumber": "13",
+      "headshotUrl": "https://img.mlbstatic.com/mlb-photos/image/upload/v1/people/592518/headshot/67/current",
+      "stats": {
+        "season": {
+          "hr": 29,
+          "avg": ".275",
+          "rbi": 95,
+          "ops": ".845",
+          "defense": "Gold Glove caliber"
+        },
+        "career": {
+          "hr": 300,
+          "avg": ".282",
+          "rbi": 1000,
+          "ops": ".830"
+        }
+      },
+      "bio": "Manny Machado is one of the most complete players in baseball. A former Gold Glove winner at third base, Machado combines elite defense with consistent power hitting. His leadership and experience bring stability to the Padres lineup.",
+      "nickname": "Machado"
+    },
+    {
+      "id": 701538,
+      "name": "Jackson Merrill",
+      "position": "Center Fielder",
+      "positionAbbr": "CF",
+      "jerseyNumber": "3",
+      "headshotUrl": "https://img.mlbstatic.com/mlb-photos/image/upload/v1/people/701538/headshot/67/current",
+      "stats": {
+        "season": {
+          "hr": 24,
+          "avg": ".292",
+          "rbi": 72,
+          "ops": ".820",
+          "sb": 12
+        },
+        "career": {
+          "hr": 50,
+          "avg": ".285",
+          "rbi": 180,
+          "ops": ".800"
+        }
+      },
+      "bio": "Jackson Merrill represents the future of the Padres franchise. As a young center fielder with a keen eye at the plate and impressive power, Merrill has quickly become one of the most exciting players to watch. His statistical approach to the game sets him apart.",
+      "nickname": "The Kid"
+    },
+    {
+      "id": 669221,
+      "name": "William Contreras",
+      "position": "Catcher",
+      "positionAbbr": "C",
+      "jerseyNumber": "24",
+      "headshotUrl": "https://img.mlbstatic.com/mlb-photos/image/upload/v1/people/669221/headshot/67/current",
+      "stats": {
+        "season": {
+          "hr": 23,
+          "avg": ".281",
+          "rbi": 65,
+          "ops": ".805",
+          "caughtStealing": 45,
+          "csPercentage": ".42"
+        },
+        "career": {
+          "hr": 80,
+          "avg": ".270",
+          "rbi": 250,
+          "ops": ".780"
+        }
+      },
+      "bio": "William Contreras is the heart and soul of the Padres pitching staff. As the primary catcher, his pitch framing and game calling have become invaluable. Contreras combines offensive production with elite defensive skills behind the plate.",
+      "nickname": "Willie"
+    }
+  ],
+  
+  "triviaFacts": [
+    "Tony Gwynn, known as 'Mr. Padre,' won 8 National League batting titles during his legendary 20-year career with the San Diego Padres, finishing with a .338 lifetime batting average.",
+    "Petco Park opened its doors in downtown San Diego in 2004, featuring the iconic Western Metal Supply Co. building incorporated into the left field design.",
+    "Trevor Hoffman recorded 552 of his 601 career saves wearing a Padres uniform, entering games to the iconic sound of AC/DC's 'Hells Bells.'",
+    "The Padres were founded in 1969 as an expansion team, making them one of the younger franchises in Major League Baseball.",
+    "Dave Winfield, a Padres legend, was the first player to be elected to the Baseball Hall of Fame as a Padre in 2001.",
+    "The Padres' team colors of brown and gold were inspired by the colors of the California flag and the state's golden history.",
+    "In 1984, the Padres won their first National League pennant, led by manager Dick Williams and players like Tony Gwynn and Steve Garvey.",
+    "Petco Park is known for its spacious outfield, which makes it one of the most pitcher-friendly parks in the National League.",
+    "The Padres have had some of the most exciting uniforms in baseball history, including their famous 'brown and yellow' era in the 1970s and 1980s.",
+    "Fernando Tatis Jr. and Manny Machado form one of the most dynamic duos in baseball, combining for over 50 home runs in the 2023 season."
+  ],
+  
+  "stadiumInfo": {
+    "name": "Petco Park",
+    "location": "Downtown San Diego, California",
+    "capacity": 40209,
+    "opened": "2004",
+    "fieldDimensions": {
+      "leftField": 334,
+      "leftCenter": 390,
+      "centerField": 396,
+      "rightCenter": 390,
+      "rightField": 322
+    },
+    "notableFeatures": [
+      "Western Metal Supply Co. building in left field",
+      "Park at the Park - grassy area beyond outfield",
+      "Marine layer affects ball flight",
+      "Downtown San Diego skyline views"
+    ]
+  },
+  
+  "teamColors": {
+    "primary": "#2F241D",
+    "secondary": "#FFC425",
+    "accent": "#181412",
+    "light": "#F5F5F5",
+    "dark": "#1A1A1A"
+  },
+  
+  "apiEndpoints": {
+    "mlbStats": "https://statsapi.mlb.com/api/v1",
+    "playerData": "/api/players",
+    "teamData": "/api/teams",
+    "gameData": "/api/games"
+  }
+}
